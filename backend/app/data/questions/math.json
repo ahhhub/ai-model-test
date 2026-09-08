@@ -1,0 +1,21 @@
+{
+  "suite": {
+    "key": "math",
+    "name": "数学推理（GSM8K 风格）",
+    "category": "math",
+    "description": "小学数学应用题，考察多步算术推理能力，答案自动数值校验。",
+    "sort_order": 2
+  },
+  "questions": [
+    {"title": "苹果问题", "prompt": "小明有 5 个苹果，妈妈又给他买了 3 个，之后他吃了 2 个。请问小明还剩几个苹果？请给出最终数值答案。", "answer_type": "number", "expected": ["6"]},
+    {"title": "读书天数", "prompt": "一本书共有 120 页，小红每天读 15 页，她需要几天才能读完这本书？请给出最终数值答案。", "answer_type": "number", "expected": ["8"]},
+    {"title": "行驶距离", "prompt": "一辆汽车以每小时 60 公里的速度匀速行驶了 2.5 小时，一共行驶了多少公里？请给出最终数值答案。", "answer_type": "number", "expected": ["150"]},
+    {"title": "打折计算", "prompt": "一件商品原价 25 元，打 8 折出售，买 3 件一共需要付多少元？请给出最终数值答案。", "answer_type": "number", "expected": ["60"]},
+    {"title": "矩形面积", "prompt": "一个长方形长 8 米、宽 6 米，它的面积是多少平方米？请给出最终数值答案。", "answer_type": "number", "expected": ["48"]},
+    {"title": "班级男生", "prompt": "某班有 40 名学生，其中男生占 55%。请问男生有多少人？请给出最终数值答案。", "answer_type": "number", "expected": ["22"]},
+    {"title": "解方程", "prompt": "某个数加上 7 之后再乘以 3，结果是 36。请问这个数是多少？请给出最终数值答案。", "answer_type": "number", "expected": ["5"]},
+    {"title": "火车行程", "prompt": "一列火车以每小时 90 公里的速度行驶了 3 小时 20 分钟，一共行驶了多少公里？请给出最终数值答案。", "answer_type": "number", "expected": ["300"]},
+    {"title": "找零", "prompt": "一支笔 3.5 元，小明买了 4 支，付给店员 20 元，店员应找回多少元？请给出最终数值答案。", "answer_type": "number", "expected": ["6"]},
+    {"title": "等差数列", "prompt": "数列 2, 5, 8, 11, … 是等差数列，请问它的第 10 项是多少？请给出最终数值答案。", "answer_type": "number", "expected": ["29"]}
+  ]
+}

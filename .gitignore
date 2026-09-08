@@ -1,0 +1,19 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# 本地数据库（含 API Key，切勿提交）
+backend/app/data/app.db
+backend/app/data/*.db
+backend/app/data/*.db-journal
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+
+# 临时与系统文件
+.DS_Store
+Thumbs.db
+*.log

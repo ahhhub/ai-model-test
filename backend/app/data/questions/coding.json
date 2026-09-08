@@ -1,0 +1,121 @@
+{
+  "suite": {
+    "key": "coding",
+    "name": "编程能力",
+    "category": "coding",
+    "description": "含 Python 算法题（沙箱实际执行隐藏用例）与前端页面生成题（浏览器实测交互 + 裁判点评视觉表现）。",
+    "sort_order": 4
+  },
+  "questions": [
+    {
+      "title": "FizzBuzz",
+      "prompt": "请用 Python 实现一个函数 solution(n)，返回一个列表，包含从 1 到 n 的每个数对应的字符串：能被 3 整除的位置写 \"Fizz\"，能被 5 整除的位置写 \"Buzz\"，能同时被 3 和 5 整除的位置写 \"FizzBuzz\"，其余位置写数字本身的字符串。例如 solution(3) 应返回 [\"1\",\"2\",\"Fizz\"]。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ [3], ["1", "2", "Fizz"] ],
+        [ [5], ["1", "2", "Fizz", "4", "Buzz"] ],
+        [ [15], ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"] ]
+      ]
+    },
+    {
+      "title": "回文判断",
+      "prompt": "请用 Python 实现一个函数 solution(s)，判断字符串 s 是否为回文（正读反读相同），是则返回 True，否则返回 False。区分大小写。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ ["racecar"], true ],
+        [ ["hello"], false ],
+        [ ["abba"], true ],
+        [ [""], true ],
+        [ ["Level"], false ]
+      ]
+    },
+    {
+      "title": "两数之和",
+      "prompt": "请用 Python 实现一个函数 solution(nums, target)，在整数列表 nums 中找出和为目标值 target 的两个数，返回它们的下标组成的列表 [i, j]（按升序排列）。保证每组输入恰好有一组解。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ [[2,7,11,15], 9], [0, 1] ],
+        [ [[3,2,4], 6], [1, 2] ],
+        [ [[3,3], 6], [0, 1] ],
+        [ [[1,5,8,2], 10], [2, 3] ]
+      ]
+    },
+    {
+      "title": "反转单词顺序",
+      "prompt": "请用 Python 实现一个函数 solution(s)，把字符串 s 中单词的顺序反转（单词间以单个空格分隔，结果中单词间也以单个空格分隔），例如 solution(\"hello world\") 返回 \"world hello\"。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ ["hello world"], "world hello" ],
+        [ ["the sky is blue"], "blue is sky the" ],
+        [ ["a b c"], "c b a" ]
+      ]
+    },
+    {
+      "title": "阶乘",
+      "prompt": "请用 Python 实现一个函数 solution(n)，返回 n 的阶乘（n!）。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ [5], 120 ],
+        [ [0], 1 ],
+        [ [10], 3628800 ],
+        [ [1], 1 ]
+      ]
+    },
+    {
+      "title": "斐波那契",
+      "prompt": "请用 Python 实现一个函数 solution(n)，返回斐波那契数列的第 n 项（从 0 开始：第 0 项为 0，第 1 项为 1）。只输出代码，不要解释。",
+      "answer_type": "code",
+      "test_harness": [
+        [ [10], 55 ],
+        [ [0], 0 ],
+        [ [1], 1 ],
+        [ [20], 6765 ]
+      ]
+    },
+    {
+      "title": "互动拍立得相机",
+      "prompt": "请用 HTML + CSS + JavaScript 实现一个互动拍立得相机网页。要求：1) 页面包含相机外壳、镜头、快门按钮和相纸出口，四者空间关系清晰合理；2) 点击快门后，一张拍立得相纸从出口区域出现（相纸内容可用 canvas 或 CSS 渐变随机生成照片效果）；3) 光影处理克制，不喧宾夺主；4) 5 分钟内可交付的合理复杂度。输出完整可运行的单个 HTML 文件，所有 CSS 与 JavaScript 全部内联。只输出代码，不要解释。",
+      "answer_type": "html",
+      "max_score": 10,
+      "test_harness": {
+        "checks": [
+          {"kind": "selector", "selector": ".camera, .polaroid-camera, .instant-camera, .camera-body, [class*='camera']", "description": "相机外壳元素存在"},
+          {"kind": "selector", "selector": "#shutter, .shutter, [class*='shutter']", "description": "快门按钮存在"},
+          {"kind": "click", "selector": "#shutter, .shutter, [class*='shutter']", "wait_selector": ".photo, .polaroid, [class*='photo'], canvas", "description": "点击快门后吐出相纸"},
+          {"kind": "no_console_errors", "description": "无控制台报错"}
+        ]
+      },
+      "rubric": "请仅从视觉与设计角度点评（0-4 分）：1) 相机外壳、镜头、快门与相纸出口的空间关系是否清晰（2 分）；2) 光影处理是否克制、不喧宾夺主（1 分）；3) 整体质感与细节是否到位（1 分）。只评价设计，不评价代码实现。"
+    },
+    {
+      "title": "macOS 风格网页操作系统",
+      "prompt": "请用 HTML + CSS + JavaScript 实现一个 macOS 风格的网页操作系统：包含桌面、顶部菜单栏与底部 Dock，并集成八个应用：文本编辑器、终端、Python 环境（可执行简单 Python 代码）、代码编辑器、小游戏、文件管理器、绘图工具、视频编辑器。要求：1) 点击 Dock 图标可打开对应应用的独立窗口；2) 窗口支持拖动与关闭；3) 至少三个应用具有可交互的核心功能（如终端能输出、画板能画线、编辑器能输入）。输出完整可运行的单个 HTML 文件，所有 CSS 与 JavaScript 全部内联（如需依赖可引用 CDN）。只输出代码，不要解释。",
+      "answer_type": "html",
+      "max_score": 10,
+      "test_harness": {
+        "checks": [
+          {"kind": "selector", "selector": ".desktop, #desktop, .screen", "description": "桌面容器存在"},
+          {"kind": "selector", "selector": ".dock, #dock, [class*='dock']", "description": "Dock 存在"},
+          {"kind": "click", "selector": ".dock [class*='app'], .dock .icon, .app-icon, [data-app], .dock button, .dock div", "wait_selector": ".window, .app-window, [class*='window']", "description": "点击 Dock 图标打开应用窗口"},
+          {"kind": "no_console_errors", "description": "无控制台报错"}
+        ]
+      },
+      "rubric": "请仅从视觉与设计角度点评（0-4 分）：1) macOS 视觉风格还原度（毛玻璃、圆角、阴影）（2 分）；2) 布局与信息层级是否清晰（1 分）；3) 整体完成度与细节（1 分）。只评价设计，不评价代码实现。"
+    },
+    {
+      "title": "科幻飞船驾驶舱 HUD",
+      "prompt": "请用 HTML + CSS + JavaScript 实现一个科幻飞船驾驶舱 HUD（抬头显示）网页。要求：1) 中心有准星/瞄准系统，外围有仪表盘、雷达等元素，背景有星空；2) 不同界面层设置差异化响应速度——中心准星对鼠标/指针移动最灵敏、外围仪表响应次之、背景星空移动幅度最小，由此制造玻璃、姿态、远处空间三层之间的纵深感；3) 画面包含玻璃反射效果。输出完整可运行的单个 HTML 文件，所有 CSS 与 JavaScript 全部内联。只输出代码，不要解释。",
+      "answer_type": "html",
+      "max_score": 10,
+      "test_harness": {
+        "checks": [
+          {"kind": "selector", "selector": "canvas, svg, .hud, #hud", "description": "HUD 主画面元素存在"},
+          {"kind": "selector", "selector": ".crosshair, .reticle, #reticle, [class*='crosshair'], [class*='reticle']", "description": "中心准星存在"},
+          {"kind": "pointer_move", "selector": "body", "expect_delta": true, "description": "指针移动后画面有响应"},
+          {"kind": "no_console_errors", "description": "无控制台报错"}
+        ]
+      },
+      "rubric": "请仅从视觉与设计角度点评（0-4 分）：1) 三层纵深感（玻璃、姿态、远处空间）是否成立（2 分）；2) HUD 科幻质感与玻璃反射效果（1 分）；3) 画面布局与细节（1 分）。只评价设计，不评价代码实现。"
+    }
+  ]
+}

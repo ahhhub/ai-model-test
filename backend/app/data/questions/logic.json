@@ -1,0 +1,21 @@
+{
+  "suite": {
+    "key": "logic",
+    "name": "逻辑推理",
+    "category": "logic",
+    "description": "演绎推理、数列规律、真假判断等经典逻辑题，答案确定、自动校验。",
+    "sort_order": 3
+  },
+  "questions": [
+    {"title": "三段论", "prompt": "已知：所有 A 都是 B，且所有 B 都是 C。请问“所有 A 都是 C”这一命题是否正确？请回答“正确”或“不正确”。", "answer_type": "text", "expected": ["正确", "是", "对"]},
+    {"title": "斐波那契数列", "prompt": "数列：1, 1, 2, 3, 5, 8, ？请问下一个数是什么？请只回答数字。", "answer_type": "number", "expected": ["13"]},
+    {"title": "数列规律", "prompt": "数列：2, 6, 12, 20, 30, ？请问下一个数是什么？请只回答数字。", "answer_type": "number", "expected": ["42"]},
+    {"title": "平方数", "prompt": "数列：1, 4, 9, 16, 25, ？请问下一个数是什么？请只回答数字。", "answer_type": "number", "expected": ["36"]},
+    {"title": "天平称球", "prompt": "有 9 个外观完全相同的球，其中 1 个比其他球更重。使用没有砝码的天平，最少需要称几次就一定能找出较重的球？请只回答数字。", "answer_type": "number", "expected": ["2"]},
+    {"title": "身高比较", "prompt": "甲比乙高，乙比丙高。请问甲、乙、丙三人中谁最高？请只回答人物名称。", "answer_type": "text", "expected": ["甲"]},
+    {"title": "密码组合", "prompt": "一个 3 位数字密码锁，每位可以是 0 到 9 的任意数字。请问一共有多少种可能的密码组合？请只回答数字。", "answer_type": "number", "expected": ["1000"]},
+    {"title": "叫声类比", "prompt": "狗对应“汪汪”，猫对应“喵喵”。请问牛对应什么叫声？请只回答拟声词。", "answer_type": "text", "expected": ["哞", "哞哞", "mou"]},
+    {"title": "骑士与骗子", "prompt": "在骑士与骗子岛上，骑士永远说真话，骗子永远说假话。居民 A 说：“我是骗子。”请问 A 是骑士还是骗子？", "answer_type": "text", "expected": ["骗子"]},
+    {"title": "年龄差", "prompt": "小明比小红大 2 岁，小红比小刚大 3 岁。请问小明比小刚大几岁？请只回答数字。", "answer_type": "number", "expected": ["5"]}
+  ]
+}

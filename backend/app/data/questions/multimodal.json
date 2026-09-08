@@ -1,0 +1,85 @@
+{
+  "suite": {
+    "key": "multimodal",
+    "name": "多模态能力（图像理解）",
+    "category": "multimodal",
+    "description": "图片 + 提问的形式，考察模型视觉理解与跨模态推理能力。不支持图像输入的模型将记录为错误。",
+    "sort_order": 6
+  },
+  "questions": [
+    {
+      "title": "名画识别",
+      "prompt": "请看图片。图中这幅著名画作的作者是谁？\nA. 达·芬奇\nB. 梵高\nC. 毕加索\nD. 莫奈\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/330px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+      "answer_type": "choice",
+      "options": ["A. 达·芬奇", "B. 梵高", "C. 毕加索", "D. 莫奈"],
+      "expected": ["A"]
+    },
+    {
+      "title": "动物识别",
+      "prompt": "请看图片。图中的动物是什么？\nA. 狗\nB. 猫\nC. 兔子\nD. 狐狸\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg",
+      "answer_type": "choice",
+      "options": ["A. 狗", "B. 猫", "C. 兔子", "D. 狐狸"],
+      "expected": ["B"]
+    },
+    {
+      "title": "地标建筑",
+      "prompt": "请看图片。图中的地标建筑位于哪座城市？\nA. 伦敦\nB. 纽约\nC. 巴黎\nD. 罗马\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
+      "answer_type": "choice",
+      "options": ["A. 伦敦", "B. 纽约", "C. 巴黎", "D. 罗马"],
+      "expected": ["C"]
+    },
+    {
+      "title": "水果识别",
+      "prompt": "请看图片。图中的水果是什么？\nA. 香蕉\nB. 橙子\nC. 苹果\nD. 梨\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/250px-Red_Apple.jpg",
+      "answer_type": "choice",
+      "options": ["A. 香蕉", "B. 橙子", "C. 苹果", "D. 梨"],
+      "expected": ["C"]
+    },
+    {
+      "title": "斑马特征",
+      "prompt": "请看图片。图中的动物身上有什么显著特征？\nA. 黑白条纹\nB. 全身斑点\nC. 纯色皮毛\nD. 鳞片\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Plains_Zebra_Equus_quagga.jpg/330px-Plains_Zebra_Equus_quagga.jpg",
+      "answer_type": "choice",
+      "options": ["A. 黑白条纹", "B. 全身斑点", "C. 纯色皮毛", "D. 鳞片"],
+      "expected": ["A"]
+    },
+    {
+      "title": "交通信号灯",
+      "prompt": "请看图片。图中交通信号灯亮着的是什么颜色的灯？\nA. 绿色\nB. 红色\nC. 黄色\nD. 蓝色\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/LED_traffic_light_on_red.jpg/330px-LED_traffic_light_on_red.jpg",
+      "answer_type": "choice",
+      "options": ["A. 绿色", "B. 红色", "C. 黄色", "D. 蓝色"],
+      "expected": ["B"]
+    },
+    {
+      "title": "名山识别",
+      "prompt": "请看图片。图中这座著名的山是？\nA. 富士山\nB. 珠穆朗玛峰\nC. 乞力马扎罗山\nD. 阿尔卑斯山\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mount_Fuji_at_sunset%2C_March_2025.jpg/330px-Mount_Fuji_at_sunset%2C_March_2025.jpg",
+      "answer_type": "choice",
+      "options": ["A. 富士山", "B. 珠穆朗玛峰", "C. 乞力马扎罗山", "D. 阿尔卑斯山"],
+      "expected": ["A"]
+    },
+    {
+      "title": "香蕉识别",
+      "prompt": "请看图片。图中的水果是什么？\nA. 苹果\nB. 香蕉\nC. 西瓜\nD. 葡萄\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/250px-Banana-Single.jpg",
+      "answer_type": "choice",
+      "options": ["A. 苹果", "B. 香蕉", "C. 西瓜", "D. 葡萄"],
+      "expected": ["B"]
+    },
+    {
+      "title": "图像描述",
+      "prompt": "请看图片。请用中文详细描述图中的动物，包括它的外观特征和姿态，不少于 40 字。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg",
+      "answer_type": "text",
+      "judge": true,
+      "max_score": 10,
+      "rubric": "评分维度（1-10 分）：1) 准确性：描述是否符合图片实际内容（5 分）；2) 完整性：是否覆盖外观特征与姿态（3 分）；3) 表达质量：语言是否通顺流畅（2 分）。",
+      "reference": "图中是一只猫，它有着橙白相间的毛发和尖尖的耳朵，眼睛炯炯有神，正蹲坐在地上，姿态警觉地注视着前方。"
+    }
+  ]
+}

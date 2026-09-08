@@ -1,0 +1,31 @@
+{
+  "suite": {
+    "key": "general",
+    "name": "通用常识（MMLU 风格）",
+    "category": "general",
+    "description": "覆盖科学、历史、地理、文化等多学科常识选择题，检验模型通用知识储备。",
+    "sort_order": 1
+  },
+  "questions": [
+    {"title": "水的化学式", "prompt": "水分子的化学式是什么？\nA. H2O\nB. CO2\nC. O2\nD. NaCl\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. H2O", "B. CO2", "C. O2", "D. NaCl"], "expected": ["A"]},
+    {"title": "光速", "prompt": "光在真空中的传播速度大约是多少？\nA. 3×10^6 米/秒\nB. 3×10^8 米/秒\nC. 3×10^10 米/秒\nD. 3×10^4 米/秒\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 3×10^6 米/秒", "B. 3×10^8 米/秒", "C. 3×10^10 米/秒", "D. 3×10^4 米/秒"], "expected": ["B"]},
+    {"title": "太阳系最大行星", "prompt": "太阳系中体积最大的行星是？\nA. 木星\nB. 土星\nC. 海王星\nD. 地球\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 木星", "B. 土星", "C. 海王星", "D. 地球"], "expected": ["A"]},
+    {"title": "法国首都", "prompt": "法国的首都是哪座城市？\nA. 伦敦\nB. 巴黎\nC. 柏林\nD. 马德里\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 伦敦", "B. 巴黎", "C. 柏林", "D. 马德里"], "expected": ["B"]},
+    {"title": "化学元素 Fe", "prompt": "化学元素符号 Fe 表示哪种元素？\nA. 铁\nB. 氟\nC. 铍\nD. 铅\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 铁", "B. 氟", "C. 铍", "D. 铅"], "expected": ["A"]},
+    {"title": "四大发明", "prompt": "以下哪一项不属于中国古代四大发明？\nA. 火药\nB. 指南针\nC. 造纸术\nD. 蒸汽机\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 火药", "B. 指南针", "C. 造纸术", "D. 蒸汽机"], "expected": ["D"]},
+    {"title": "阶乘", "prompt": "5 的阶乘（5!）等于多少？\nA. 120\nB. 60\nC. 25\nD. 100\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 120", "B. 60", "C. 25", "D. 100"], "expected": ["A"]},
+    {"title": "勾股定理", "prompt": "直角三角形的两条直角边分别为 3 和 4，斜边长度为？\nA. 5\nB. 6\nC. 7\nD. 8\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 5", "B. 6", "C. 7", "D. 8"], "expected": ["A"]},
+    {"title": "地球公转周期", "prompt": "地球绕太阳公转一周大约需要多长时间？\nA. 一天\nB. 一个月\nC. 一年\nD. 十年\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 一天", "B. 一个月", "C. 一年", "D. 十年"], "expected": ["C"]},
+    {"title": "哈姆雷特作者", "prompt": "戏剧《哈姆雷特》的作者是？\nA. 莎士比亚\nB. 托尔斯泰\nC. 雨果\nD. 但丁\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 莎士比亚", "B. 托尔斯泰", "C. 雨果", "D. 但丁"], "expected": ["A"]},
+    {"title": "世界最高峰", "prompt": "世界上海拔最高的山峰是？\nA. 珠穆朗玛峰\nB. 乔戈里峰\nC. 富士山\nD. 勃朗峰\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 珠穆朗玛峰", "B. 乔戈里峰", "C. 富士山", "D. 勃朗峰"], "expected": ["A"]},
+    {"title": "人体最大器官", "prompt": "人体面积最大的器官是？\nA. 肝脏\nB. 皮肤\nC. 肺\nD. 大脑\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 肝脏", "B. 皮肤", "C. 肺", "D. 大脑"], "expected": ["B"]},
+    {"title": "光合作用", "prompt": "植物进行光合作用时主要吸收哪种气体？\nA. 氧气\nB. 二氧化碳\nC. 氮气\nD. 氢气\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 氧气", "B. 二氧化碳", "C. 氮气", "D. 氢气"], "expected": ["B"]},
+    {"title": "蒙娜丽莎", "prompt": "油画《蒙娜丽莎》的作者是？\nA. 米开朗基罗\nB. 拉斐尔\nC. 达·芬奇\nD. 梵高\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 米开朗基罗", "B. 拉斐尔", "C. 达·芬奇", "D. 梵高"], "expected": ["C"]},
+    {"title": "声音传播", "prompt": "声音在下列哪种介质中无法传播？\nA. 空气\nB. 水\nC. 钢铁\nD. 真空\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 空气", "B. 水", "C. 钢铁", "D. 真空"], "expected": ["D"]},
+    {"title": "DNA 结构", "prompt": "DNA 分子的空间结构是？\nA. 单链\nB. 双螺旋\nC. 三叶草形\nD. 环形\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 单链", "B. 双螺旋", "C. 三叶草形", "D. 环形"], "expected": ["B"]},
+    {"title": "恐龙灭绝", "prompt": "非鸟类恐龙灭绝大约发生在多少年前？\nA. 6600 万年前\nB. 6.6 亿年前\nC. 6.6 万年前\nD. 660 年前\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 6600 万年前", "B. 6.6 亿年前", "C. 6.6 万年前", "D. 660 年前"], "expected": ["A"]},
+    {"title": "联合国总部", "prompt": "联合国总部位于哪座城市？\nA. 日内瓦\nB. 巴黎\nC. 纽约\nD. 伦敦\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 日内瓦", "B. 巴黎", "C. 纽约", "D. 伦敦"], "expected": ["C"]},
+    {"title": "二进制", "prompt": "十进制数 15 的二进制表示是？\nA. 1111\nB. 1100\nC. 1010\nD. 1001\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 1111", "B. 1100", "C. 1010", "D. 1001"], "expected": ["A"]},
+    {"title": "登月第一人", "prompt": "人类历史上第一个登上月球的人是？\nA. 加加林\nB. 阿姆斯特朗\nC. 奥尔德林\nD. 杨利伟\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 加加林", "B. 阿姆斯特朗", "C. 奥尔德林", "D. 杨利伟"], "expected": ["B"]}
+  ]
+}
