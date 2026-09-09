@@ -52,6 +52,7 @@ def init_db() -> None:
                 title TEXT DEFAULT '',
                 prompt TEXT NOT NULL,
                 image_url TEXT DEFAULT '',
+                image_url_backup TEXT DEFAULT '',
                 answer_type TEXT NOT NULL DEFAULT 'text',
                 options TEXT DEFAULT '',
                 expected TEXT DEFAULT '',
@@ -100,6 +101,8 @@ def init_db() -> None:
         qcols = {row["name"] for row in conn.execute("PRAGMA table_info(questions)").fetchall()}
         if "difficulty" not in qcols:
             conn.execute("ALTER TABLE questions ADD COLUMN difficulty TEXT NOT NULL DEFAULT 'easy'")
+        if "image_url_backup" not in qcols:
+            conn.execute("ALTER TABLE questions ADD COLUMN image_url_backup TEXT DEFAULT ''")
         # 老库迁移：runs 表补充 difficulty 列
         rcols = {row["name"] for row in conn.execute("PRAGMA table_info(runs)").fetchall()}
         if "difficulty" not in rcols:
@@ -147,14 +150,15 @@ def seed_questions() -> None:
             for q in questions:
                 conn.execute(
                     """INSERT INTO questions
-                       (suite_id,title,prompt,image_url,answer_type,options,expected,
+                       (suite_id,title,prompt,image_url,image_url_backup,answer_type,options,expected,
                         test_harness,rubric,reference,judge,max_score)
-                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                     (
                         suite_id,
                         q.get("title", ""),
                         q.get("prompt", ""),
                         q.get("image_url", ""),
+                        q.get("image_url_backup", ""),
                         q.get("answer_type", "text"),
                         json.dumps(q.get("options", []), ensure_ascii=False),
                         json.dumps(q.get("expected", []), ensure_ascii=False),
@@ -194,9 +198,17 @@ def migrate_questions() -> None:
             (suite.get("name"), suite.get("description", ""), suite_id),
         )
         existing = {
-            r["prompt"]
-            for r in query("SELECT prompt FROM questions WHERE suite_id=?", (suite_id,))
+            r["prompt"]: r["id"]
+            for r in query("SELECT id, prompt FROM questions WHERE suite_id=?", (suite_id,))
         }
+        # 同步既有种子题目的图片地址（主/备），用户自定义题目不受影响
+        for q in questions:
+            qid = existing.get(q.get("prompt"))
+            if qid and (q.get("image_url") or q.get("image_url_backup")):
+                execute(
+                    "UPDATE questions SET image_url=?, image_url_backup=? WHERE id=?",
+                    (q.get("image_url", ""), q.get("image_url_backup", ""), qid),
+                )
         new_items = [q for q in questions if q.get("prompt") not in existing]
         if not new_items:
             continue
@@ -208,6 +220,7 @@ def migrate_questions() -> None:
                     q.get("title", ""),
                     q.get("prompt", ""),
                     q.get("image_url", ""),
+                    q.get("image_url_backup", ""),
                     q.get("answer_type", "text"),
                     json.dumps(q.get("options", []), ensure_ascii=False),
                     json.dumps(q.get("expected", []), ensure_ascii=False),
@@ -220,9 +233,9 @@ def migrate_questions() -> None:
             )
         executemany(
             """INSERT INTO questions
-               (suite_id,title,prompt,image_url,answer_type,options,expected,
+               (suite_id,title,prompt,image_url,image_url_backup,answer_type,options,expected,
                 test_harness,rubric,reference,judge,max_score)
-               VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             params,
         )
 

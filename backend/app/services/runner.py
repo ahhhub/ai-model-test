@@ -36,6 +36,14 @@ async def start_run(run_id: int) -> None:
     asyncio.create_task(_task_wrapper(run_id))
 
 
+def _is_image_error(error: str) -> bool:
+    """判断错误是否与图片下载/加载有关"""
+    low = (error or "").lower()
+    return ("image" in low or "图片" in error) and any(
+        k in low for k in ("download", "403", "failed", "load", "loading", "无法", "下载", "失败")
+    )
+
+
 async def run_execute(run_id: int) -> None:
     stop_event = _stop_flags.get(run_id, asyncio.Event())
     run = db.query_one("SELECT * FROM runs WHERE id=?", (run_id,))
@@ -80,6 +88,12 @@ async def run_execute(run_id: int) -> None:
                 return
             messages = llm.build_messages(q)
             answer, latency, error, usage = await llm.chat_once(model, messages)
+            backup_used = False
+            if error and q.get("image_url_backup") and _is_image_error(error):
+                q2 = dict(q)
+                q2["image_url"] = q2["image_url_backup"]
+                answer, latency, error, usage = await llm.chat_once(model, llm.build_messages(q2))
+                backup_used = not error
             score, detail = 0.0, ""
             max_score = q.get("max_score") or 1
             if error:
@@ -94,6 +108,8 @@ async def run_execute(run_id: int) -> None:
                     score, detail = await frontend.score_html(answer, q, judge_model)
                 else:
                     score, detail = scorers.score_objective(answer, q)
+            if backup_used and not error:
+                detail = (detail + "（已切换备用图片地址）").strip()
             output_tokens = (usage or {}).get("completion_tokens")
             db.execute(
                 """INSERT INTO run_results
