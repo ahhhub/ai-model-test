@@ -1,14 +1,46 @@
 """OpenAI 兼容协议的 LLM 客户端"""
 import asyncio
+import base64
 import time
+from pathlib import Path
 from typing import Any
 
 from openai import AsyncOpenAI
 
-from ..config import MAX_CONCURRENT_REQUESTS, REQUEST_TIMEOUT_SECONDS
+from ..config import IMAGES_DIR, MAX_CONCURRENT_REQUESTS, REQUEST_TIMEOUT_SECONDS
 
 # 全局并发信号量，避免同时请求过多
 _semaphore = asyncio.Semaphore(MAX_CONCURRENT_REQUESTS)
+
+_MIME = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+}
+
+
+def resolve_local_image(question: dict) -> str | None:
+    """优先从本地图片库（按难度分类）读取图片并转为 base64 data URI"""
+    url = question.get("image_url") or ""
+    if not url:
+        return None
+    filename = url.rsplit("/", 1)[-1].split("?")[0]
+    if not filename:
+        return None
+    difficulty = question.get("difficulty") or "easy"
+    candidates = [IMAGES_DIR / difficulty / filename, IMAGES_DIR / filename]
+    for path in candidates:
+        try:
+            if path.is_file():
+                mime = _MIME.get(path.suffix.lower())
+                if mime:
+                    b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+                    return f"data:{mime};base64,{b64}"
+        except OSError:
+            continue
+    return None
 
 
 def build_client(model: dict) -> AsyncOpenAI:
@@ -78,9 +110,13 @@ async def _create_completion(client: AsyncOpenAI, model: dict, messages: list[di
     raise last_error
 
 
-def build_messages(question: dict) -> list[dict]:
-    """根据题目类型构造消息（支持图像输入）"""
+def build_messages(question: dict, use_local: bool = True) -> list[dict]:
+    """根据题目类型构造消息（支持图像输入，优先本地 base64 上传）"""
     image_url = question.get("image_url") or ""
+    if image_url and use_local:
+        local = resolve_local_image(question)
+        if local:
+            image_url = local
     if image_url:
         return [
             {

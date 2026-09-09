@@ -93,9 +93,10 @@ async def run_execute(run_id: int) -> None:
             answer, latency, error, usage = await llm.chat_once(model, messages)
             backup_used = False
             if error and q.get("image_url_backup") and _is_image_error(error):
-                q2 = dict(q)
-                q2["image_url"] = q2["image_url_backup"]
-                answer, latency, error, usage = await llm.chat_once(model, llm.build_messages(q2))
+                # 本地 base64 失败时改用 CDN 地址重试
+                answer, latency, error, usage = await llm.chat_once(
+                    model, llm.build_messages(q, use_local=False)
+                )
                 backup_used = not error
             score, detail = 0.0, ""
             max_score = q.get("max_score") or 1

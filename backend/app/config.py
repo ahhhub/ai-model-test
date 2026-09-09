@@ -7,6 +7,8 @@ DATA_DIR = BASE_DIR / "data"
 QUESTIONS_DIR = DATA_DIR / "questions"
 STATIC_DIR = BASE_DIR / "static"
 FRONTEND_DIST = BASE_DIR.parent.parent / "frontend" / "dist"
+# 本地图片库（按难度分类，测试时以 base64 直接上传）
+IMAGES_DIR = BASE_DIR.parent.parent / "images"
 
 DB_PATH = DATA_DIR / "app.db"
 
