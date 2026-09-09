@@ -41,7 +41,8 @@
               </el-radio-group>
             </div>
             <el-scrollbar max-height="520px">
-              <el-table :data="filteredQuestions" v-loading="qLoading" border size="small">
+              <el-table :data="filteredQuestions" v-loading="qLoading" border size="small"
+                @row-click="openDetail" style="cursor: pointer">
               <el-table-column type="index" label="#" width="45" />
               <el-table-column prop="title" label="题目" min-width="130" show-overflow-tooltip />
               <el-table-column label="类型" width="80">
@@ -59,7 +60,7 @@
               <el-table-column label="操作" width="80">
                 <template #default="{ row }">
                   <el-popconfirm title="删除该题？" @confirm="removeQuestion(row)">
-                    <template #reference><el-button size="small" type="danger" text>删除</el-button></template>
+                    <template #reference><el-button size="small" type="danger" text @click.stop>删除</el-button></template>
                   </el-popconfirm>
                 </template>
               </el-table-column>
@@ -110,6 +111,45 @@
         <el-button type="primary" @click="addQuestion">保存</el-button>
       </template>
     </el-dialog>
+    <el-dialog v-model="detailVisible" :title="detailQuestion?.title || '题目详情'" width="720px" top="6vh">
+      <template v-if="detailQuestion">
+        <div style="display: flex; gap: 8px; margin-bottom: 12px">
+          <el-tag size="small" :type="detailQuestion.judge ? 'warning' : 'info'">
+            {{ detailQuestion.judge ? '裁判评分' : typeName(detailQuestion.answer_type) }}
+          </el-tag>
+          <el-tag size="small" :type="diffTag(detailQuestion.difficulty)">{{ DIFF[detailQuestion.difficulty] || detailQuestion.difficulty }}</el-tag>
+          <el-tag v-if="detailQuestion.max_score > 1" size="small" type="danger">满分 {{ detailQuestion.max_score }}</el-tag>
+        </div>
+        <el-descriptions :column="1" border>
+          <el-descriptions-item label="题干">
+            <div style="white-space: pre-wrap">{{ detailQuestion.prompt }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.image_url" label="图片">
+            <el-image :src="detailQuestion.image_url" style="max-width: 320px; max-height: 220px" fit="contain" />
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.options?.length" label="选项">
+            <div v-for="(o, i) in detailQuestion.options" :key="i" :style="optionStyle(o)">{{ o }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="!detailQuestion.judge" label="标准答案">
+            <b style="color: #67c23a">{{ formatExpected(detailQuestion) }}</b>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.judge" label="评分标准">
+            <div style="white-space: pre-wrap">{{ detailQuestion.rubric || '—' }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.judge" label="期望/示例答案">
+            <div style="white-space: pre-wrap">{{ detailQuestion.reference || '—' }}</div>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.answer_type === 'code' && detailQuestion.test_harness?.length" label="测试用例">
+            <div v-for="(t, i) in detailQuestion.test_harness" :key="i" style="font-family: Consolas, monospace; font-size: 12px">
+              solution{{ t[0] }} → {{ t[1] }}
+            </div>
+          </el-descriptions-item>
+          <el-descriptions-item v-if="detailQuestion.answer_type === 'html' && detailQuestion.test_harness?.checks?.length" label="浏览器检查项">
+            <div v-for="(c, i) in detailQuestion.test_harness.checks" :key="i">• {{ c.description }}</div>
+          </el-descriptions-item>
+        </el-descriptions>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -128,6 +168,8 @@ const suiteTable = ref(null)
 const optionsText = ref('')
 const expectedText = ref('')
 const diffFilter = ref('')
+const detailVisible = ref(false)
+const detailQuestion = ref(null)
 
 const DIFF = { easy: '简单', medium: '中等', medium_high: '中高', hard: '高难', extreme: '极难' }
 const diffTag = d => ({ easy: 'success', medium: 'info', medium_high: 'warning', hard: 'danger', extreme: 'danger' })[d] || 'info'
@@ -135,6 +177,28 @@ const diffTag = d => ({ easy: 'success', medium: 'info', medium_high: 'warning',
 const filteredQuestions = computed(() =>
   diffFilter.value ? questions.value.filter(q => q.difficulty === diffFilter.value) : questions.value
 )
+
+function openDetail(row) {
+  detailQuestion.value = row
+  detailVisible.value = true
+}
+
+function formatExpected(q) {
+  if (q.answer_type === 'choice') {
+    const letter = (q.expected || [])[0] || ''
+    const opt = (q.options || []).find(o => o.startsWith(letter + '.')) || ''
+    return opt ? `${opt}（${letter}）` : letter
+  }
+  return (q.expected || []).join(' / ') || '—'
+}
+
+function optionStyle(opt) {
+  const letter = (detailQuestion.value?.expected || [])[0] || ''
+  if (detailQuestion.value?.answer_type === 'choice' && opt.startsWith(letter + '.')) {
+    return { color: '#67c23a', fontWeight: 700 }
+  }
+  return {}
+}
 
 const form = reactive({ title: '', prompt: '', answer_type: 'choice', image_url: '', rubric: '', difficulty: 'easy' })
 

@@ -5,6 +5,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from .. import database as db
+from ..services import scorers
 
 router = APIRouter(prefix="/api", tags=["suites"])
 
@@ -85,3 +86,23 @@ def add_question(suite_id: int, payload: QuestionIn):
 def delete_question(question_id: int):
     db.execute("DELETE FROM questions WHERE id=?", (question_id,))
     return {"ok": True}
+
+
+class PreviewIn(BaseModel):
+    question_id: int
+    answer: str
+
+
+@router.post("/preview/code")
+def preview_code(payload: PreviewIn):
+    """代码题预览：重新执行模型生成的代码，返回逐用例结果"""
+    q = db.query_one("SELECT * FROM questions WHERE id=?", (payload.question_id,))
+    if not q:
+        raise HTTPException(404, "题目不存在")
+    if q["answer_type"] != "code":
+        raise HTTPException(400, "该题目不是编程题")
+    code = scorers._extract_code_block(payload.answer)
+    if not code:
+        return {"code": "", "score": 0.0, "detail": "未能从回答中提取代码", "cases": []}
+    score, detail, cases = scorers.run_code_cases(payload.answer, q)
+    return {"code": code[:50000], "score": score, "detail": detail, "cases": cases}

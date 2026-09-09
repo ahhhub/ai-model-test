@@ -14,6 +14,7 @@ export default {
   listQuestions: suiteId => http.get(`/api/suites/${suiteId}/questions`).then(r => r.data),
   addQuestion: (suiteId, data) => http.post(`/api/suites/${suiteId}/questions`, data).then(r => r.data),
   deleteQuestion: id => http.delete(`/api/questions/${id}`).then(r => r.data),
+  previewCode: data => http.post('/api/preview/code', data).then(r => r.data),
   // 评测
   listRuns: () => http.get('/api/runs').then(r => r.data),
   createRun: data => http.post('/api/runs', data).then(r => r.data),

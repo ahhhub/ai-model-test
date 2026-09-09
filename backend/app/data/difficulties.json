@@ -12,7 +12,10 @@
     "合并区间": "medium_high",
     "接雨水": "hard",
     "最长回文子串": "hard",
-    "N皇后计数": "extreme"
+    "N皇后计数": "extreme",
+    "无重复字符的最长子串": "medium_high",
+    "岛屿数量": "hard",
+    "编辑距离": "extreme"
   },
   "emotion": {
     "安慰受批评的同事": "easy",
@@ -26,7 +29,9 @@
     "回应陌生人的道歉": "medium",
     "安慰失恋的好友": "medium",
     "客户投诉回应": "hard",
-    "团队冲突调解": "extreme"
+    "团队冲突调解": "extreme",
+    "委婉提醒朋友": "medium_high",
+    "会议中澄清背锅": "medium_high"
   },
   "general": {
     "水的化学式": "easy",
@@ -51,7 +56,10 @@
     "二进制": "medium",
     "图灵测试": "medium_high",
     "汉谟拉比法典": "hard",
-    "宇宙微波背景": "extreme"
+    "宇宙微波背景": "extreme",
+    "79号元素": "medium_high",
+    "黎曼猜想": "hard",
+    "哥德巴赫猜想": "extreme"
   },
   "logic": {
     "三段论": "easy",
@@ -66,7 +74,9 @@
     "骑士与骗子": "medium",
     "阶乘数列": "medium_high",
     "标签全错的盒子": "hard",
-    "三人的真话": "extreme"
+    "三人的真话": "extreme",
+    "十二球称重": "hard",
+    "含9的数字": "extreme"
   },
   "math": {
     "苹果问题": "easy",
@@ -81,7 +91,9 @@
     "火车行程": "medium_high",
     "盐水混合": "medium_high",
     "复利计算": "hard",
-    "蓄水池问题": "extreme"
+    "蓄水池问题": "extreme",
+    "工程合作": "hard",
+    "通讯员传令": "extreme"
   },
   "multimodal": {
     "名画识别": "easy",
@@ -95,6 +107,9 @@
     "图像描述": "medium",
     "斑马栖息地": "medium_high",
     "铁塔建成年代": "hard",
-    "蒙娜丽莎收藏地": "extreme"
+    "蒙娜丽莎收藏地": "extreme",
+    "富士山国家": "medium_high",
+    "猫科分类": "hard",
+    "苹果植物科": "extreme"
   }
 }

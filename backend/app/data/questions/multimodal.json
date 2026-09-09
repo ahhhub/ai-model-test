@@ -104,6 +104,30 @@
       "answer_type": "choice",
       "options": ["A. 卢浮宫", "B. 大英博物馆", "C. 纽约大都会博物馆", "D. 梵蒂冈博物馆"],
       "expected": ["A"]
+    },
+    {
+      "title": "富士山国家",
+      "prompt": "请看图片。图中这座著名山峰位于哪个国家？\nA. 日本\nB. 中国\nC. 韩国\nD. 印度尼西亚\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mount_Fuji_at_sunset%2C_March_2025.jpg/330px-Mount_Fuji_at_sunset%2C_March_2025.jpg",
+      "answer_type": "choice",
+      "options": ["A. 日本", "B. 中国", "C. 韩国", "D. 印度尼西亚"],
+      "expected": ["A"]
+    },
+    {
+      "title": "猫科分类",
+      "prompt": "请看图片。图中的动物在动物学分类上属于哪个科？\nA. 猫科\nB. 犬科\nC. 熊科\nD. 鼬科\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg",
+      "answer_type": "choice",
+      "options": ["A. 猫科", "B. 犬科", "C. 熊科", "D. 鼬科"],
+      "expected": ["A"]
+    },
+    {
+      "title": "苹果植物科",
+      "prompt": "请看图片。图中的水果所属的植物在植物学分类上属于哪个科？\nA. 蔷薇科\nB. 芸香科\nC. 茄科\nD. 葫芦科\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/250px-Red_Apple.jpg",
+      "answer_type": "choice",
+      "options": ["A. 蔷薇科", "B. 芸香科", "C. 茄科", "D. 葫芦科"],
+      "expected": ["A"]
     }
   ]
 }

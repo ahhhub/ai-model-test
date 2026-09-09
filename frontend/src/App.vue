@@ -48,4 +48,5 @@ body { font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-ser
 .header .hint { font-size: 12px; color: #909399; }
 .main { padding: 16px; overflow: auto; }
 .card-title { display: flex; align-items: center; justify-content: space-between; font-weight: 600; margin-bottom: 4px; }
+.code-box { background:#1e1e2e; color:#d4d4d4; padding:12px; border-radius:6px; font-family:Consolas,monospace; font-size:12px; max-height:260px; overflow:auto; white-space:pre-wrap; }
 </style>

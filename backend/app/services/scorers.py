@@ -84,16 +84,16 @@ def _extract_code_block(answer: str) -> str | None:
     return None
 
 
-def score_code(answer: str, question: dict) -> tuple[float, str]:
-    """编程题：提取代码写入临时文件，执行测试用例"""
+def run_code_cases(answer: str, question: dict) -> tuple[float, str, list[dict]]:
+    """编程题：提取代码写入临时文件，逐用例执行，返回 (得分, 汇总, 用例明细)"""
     harness = json.loads(question.get("test_harness") or "[]")
     if not harness:
-        return 0.0, "缺少测试用例"
+        return 0.0, "缺少测试用例", []
     code = _extract_code_block(answer)
     if not code:
-        return 0.0, "未能从回答中提取代码"
+        return 0.0, "未能从回答中提取代码", []
+    cases: list[dict] = []
     passed = 0
-    detail_parts: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
         (tmp_path / "solution.py").write_text(code, encoding="utf-8")
@@ -121,12 +121,22 @@ def score_code(answer: str, question: dict) -> tuple[float, str]:
                 out = (proc.stdout or "").strip()
                 if out.startswith("PASS"):
                     passed += 1
+                    cases.append({"index": i + 1, "status": "PASS", "args": repr(args), "expected": repr(expected), "output": out})
+                elif out.startswith("FAIL_GOT_"):
+                    cases.append({"index": i + 1, "status": "FAIL", "args": repr(args), "expected": repr(expected), "output": out})
                 else:
-                    detail_parts.append(f"用例{i+1}: {out[:120] or proc.stderr[:120]}")
+                    cases.append({"index": i + 1, "status": "ERR", "args": repr(args), "expected": repr(expected), "output": (out or proc.stderr)[:300]})
             except subprocess.TimeoutExpired:
-                detail_parts.append(f"用例{i+1}: 执行超时")
+                cases.append({"index": i + 1, "status": "ERR", "args": repr(args), "expected": repr(expected), "output": "执行超时（15 秒）"})
     score = passed / len(harness)
-    detail = f"通过 {passed}/{len(harness)} 个用例" + (("；" + "；".join(detail_parts[:2])) if detail_parts else "")
+    fail_parts = [f"用例{c['index']}: {c['output'][:80]}" for c in cases if c["status"] != "PASS"][:2]
+    detail = f"通过 {passed}/{len(harness)} 个用例" + (("；" + "；".join(fail_parts)) if fail_parts else "")
+    return score, detail, cases
+
+
+def score_code(answer: str, question: dict) -> tuple[float, str]:
+    """编程题：提取代码块，执行测试用例（兼容旧接口）"""
+    score, detail, _ = run_code_cases(answer, question)
     return score, detail
 
 

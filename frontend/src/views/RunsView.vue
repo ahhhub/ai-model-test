@@ -126,9 +126,38 @@
               </el-popover>
             </template>
           </el-table-column>
+          <el-table-column label="预览" width="110" fixed="right">
+            <template #default="{ row }">
+              <el-button v-if="row.answer_type === 'code' && row.answer" size="small" @click="openCodePreview(row)">运行结果</el-button>
+              <el-button v-else-if="row.answer_type === 'html' && row.answer" size="small" @click="openHtmlPreview(row)">页面预览</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </template>
     </el-drawer>
+
+    <el-dialog v-model="codeDialog" title="Python 代码运行预览" width="760px" top="6vh">
+      <div v-if="codePreview">
+        <el-alert :type="codePreview.score === 1 ? 'success' : 'warning'" :closable="false" :title="codePreview.detail" style="margin-bottom: 10px" />
+        <pre class="code-box">{{ codePreview.code }}</pre>
+        <el-table :data="codePreview.cases" size="small" border>
+          <el-table-column prop="index" label="#" width="50" />
+          <el-table-column label="结果" width="80">
+            <template #default="{ row }">
+              <el-tag size="small" :type="row.status === 'PASS' ? 'success' : 'danger'">{{ row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="args" label="输入" min-width="140" show-overflow-tooltip />
+          <el-table-column prop="expected" label="期望" min-width="140" show-overflow-tooltip />
+          <el-table-column prop="output" label="实际输出" min-width="160" show-overflow-tooltip />
+        </el-table>
+      </div>
+    </el-dialog>
+
+    <el-dialog v-model="htmlDialog" title="前端页面预览（可交互）" width="86%" top="4vh">
+      <iframe :srcdoc="htmlSrcDoc" style="width:100%; height:74vh; border:1px solid #dcdfe6; border-radius:6px"
+        sandbox="allow-scripts allow-modals allow-forms allow-popups" />
+    </el-dialog>
   </div>
 </template>
 
@@ -145,6 +174,10 @@ const creating = ref(false)
 const detailVisible = ref(false)
 const detailRun = ref(null)
 const detailData = ref(null)
+const codeDialog = ref(false)
+const codePreview = ref(null)
+const htmlDialog = ref(false)
+const htmlSrcDoc = ref('')
 let pollTimer = null
 
 const createForm = reactive({ name: '', model_ids: [], suite_ids: [], judge_model_id: null, difficulty: '' })
@@ -191,14 +224,37 @@ const detailRows = computed(() => {
   if (!detailData.value) return []
   const ms = Object.fromEntries(detailData.value.models.map(m => [m.id, m.display_name || m.name]))
   const ss = Object.fromEntries(detailData.value.suites.map(s => [s.id, s.name]))
-  const qs = {}
+  const qs = Object.fromEntries((detailData.value.questions || []).map(q => [q.id, q]))
   return detailData.value.results.map(r => ({
     ...r,
     model_name: ms[r.model_id],
     suite_name: ss[r.suite_id],
-    question_title: r.question_id
+    question_title: qs[r.question_id]?.title || `#${r.question_id}`,
+    answer_type: qs[r.question_id]?.answer_type || ''
   }))
 })
+
+function extractHtml(answer) {
+  let m = answer.match(/```(?:html|htm)\s*\n([\s\S]*?)```/i)
+  if (m) return m[1]
+  m = answer.match(/```\s*\n([\s\S]*?)```/)
+  if (m && /<!DOCTYPE|<html|<body/i.test(m[1])) return m[1]
+  if (/<!DOCTYPE\s+html|<html[\s>]/i.test(answer)) return answer
+  return ''
+}
+
+async function openCodePreview(row) {
+  codePreview.value = null
+  codeDialog.value = true
+  codePreview.value = await api.previewCode({ question_id: row.question_id, answer: row.answer })
+}
+
+function openHtmlPreview(row) {
+  const html = extractHtml(row.answer)
+  if (!html) { ElMessage.warning('未能从回答中提取 HTML'); return }
+  htmlSrcDoc.value = html
+  htmlDialog.value = true
+}
 
 async function loadBase() {
   models.value = await api.listModels()

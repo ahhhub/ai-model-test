@@ -101,9 +101,14 @@ def get_results(run_id: int):
     models = {m["id"]: m for m in db.query(f"SELECT * FROM models WHERE id IN ({','.join('?'*len(model_ids))})", tuple(model_ids))}
     suites = {s["id"]: s for s in db.query(f"SELECT * FROM suites WHERE id IN ({','.join('?'*len(suite_ids))})", tuple(suite_ids))}
     rows = db.query("SELECT * FROM run_results WHERE run_id=? ORDER BY id", (run_id,))
+    questions = db.query(
+        f"SELECT * FROM questions WHERE suite_id IN ({','.join('?' * len(suite_ids))})",
+        tuple(suite_ids),
+    ) if suite_ids else []
     return {
         "run": run,
         "models": list(models.values()),
         "suites": list(suites.values()),
+        "questions": questions,
         "results": rows,
     }
