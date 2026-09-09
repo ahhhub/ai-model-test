@@ -22,6 +22,7 @@ export default {
   stopRun: id => http.post(`/api/runs/${id}/stop`).then(r => r.data),
   deleteRun: id => http.delete(`/api/runs/${id}`).then(r => r.data),
   getResults: id => http.get(`/api/runs/${id}/results`).then(r => r.data),
+  scoreResult: (resultId, score) => http.put(`/api/runs/results/${resultId}/score`, { score }).then(r => r.data),
   // 报表
   leaderboard: runId => http.get('/api/reports/leaderboard', { params: { run_id: runId } }).then(r => r.data),
   radar: runId => http.get('/api/reports/radar', { params: { run_id: runId } }).then(r => r.data),

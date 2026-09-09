@@ -101,15 +101,29 @@
         </el-table>
         <h4>答题明细</h4>
         <el-table :data="detailRows" border size="small" max-height="520">
-          <el-table-column prop="model_name" label="模型" width="150" fixed />
-          <el-table-column prop="suite_name" label="题库" width="130" />
-          <el-table-column prop="question_title" label="题目" min-width="150" show-overflow-tooltip />
-          <el-table-column label="得分" width="80">
+          <el-table-column prop="model_name" label="模型" width="140" fixed />
+          <el-table-column prop="suite_name" label="题库" width="120" />
+          <el-table-column label="题目" width="160" fixed>
+            <template #default="{ row }">
+              <el-popover placement="right" width="540" trigger="click">
+                <template #reference>
+                  <el-link type="primary">{{ row.question_title }}</el-link>
+                </template>
+                <div style="font-weight:600; margin-bottom:8px">{{ row.question_title }}</div>
+                <div style="white-space: pre-wrap; margin-bottom:8px">{{ row.prompt || '—' }}</div>
+                <el-image v-if="row.image_url" :src="rowImageSrc(row)" style="max-width:100%; max-height:280px"
+                  fit="contain" @error="onRowImgError(row)" />
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column label="得分" width="130">
             <template #default="{ row }">
               <el-tag v-if="row.error" type="danger" size="small">错误</el-tag>
+              <el-tag v-else-if="row.manual && row.score == null" type="warning" size="small">待人工查看</el-tag>
               <el-tag v-else :type="(row.score ?? 0) >= (row.max_score ?? 1) ? 'success' : 'info'" size="small">
                 {{ row.score }} / {{ row.max_score }}
               </el-tag>
+              <el-button v-if="row.manual" size="small" text type="primary" @click="openScoreDialog(row)">评分</el-button>
             </template>
           </el-table-column>
           <el-table-column prop="latency_ms" label="耗时" width="90">
@@ -158,6 +172,25 @@
       <iframe :srcdoc="htmlSrcDoc" style="width:100%; height:74vh; border:1px solid #dcdfe6; border-radius:6px"
         sandbox="allow-scripts allow-modals allow-forms allow-popups" />
     </el-dialog>
+
+    <el-dialog v-model="scoreDialog" title="主观题人工评分" width="560px" top="8vh">
+      <template v-if="scoreTarget">
+        <div style="color:#909399; margin-bottom:6px">{{ scoreTarget.model_name }} · {{ scoreTarget.question_title }}</div>
+        <div style="white-space: pre-wrap; max-height:200px; overflow:auto; background:#f7f8fa; padding:10px; border-radius:6px; margin-bottom:12px">
+          {{ scoreTarget.answer || '（无回答）' }}
+        </div>
+        <el-form label-width="80px">
+          <el-form-item label="得分">
+            <el-input-number v-model="scoreValue" :min="0" :max="scoreTarget.max_score || 10" :step="0.5" />
+            <span style="color:#909399; margin-left:10px">满分 {{ scoreTarget.max_score || 10 }}</span>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template #footer>
+        <el-button @click="scoreDialog = false">取消</el-button>
+        <el-button type="primary" @click="saveScore">保存评分</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -178,6 +211,10 @@ const codeDialog = ref(false)
 const codePreview = ref(null)
 const htmlDialog = ref(false)
 const htmlSrcDoc = ref('')
+const scoreDialog = ref(false)
+const scoreTarget = ref(null)
+const scoreValue = ref(0)
+const imgSrcMap = reactive({})
 let pollTimer = null
 
 const createForm = reactive({ name: '', model_ids: [], suite_ids: [], judge_model_id: null, difficulty: '' })
@@ -201,7 +238,7 @@ const summaryRows = computed(() => {
     const rows = results.filter(r => r.model_id === m.id)
     const bySuite = {}
     for (const s of resultSuites.value) {
-      const vals = rows.filter(r => r.suite_id === s.id && r.max_score && r.error === '')
+      const vals = rows.filter(r => r.suite_id === s.id && r.max_score && r.error === '' && r.score != null)
       if (vals.length) bySuite[s.key] = { score: Math.round(vals.reduce((a, b) => a + b.score / b.max_score, 0) / vals.length * 1000) / 10 }
     }
     const suiteScores = Object.values(bySuite).map(v => v.score)
@@ -225,14 +262,44 @@ const detailRows = computed(() => {
   const ms = Object.fromEntries(detailData.value.models.map(m => [m.id, m.display_name || m.name]))
   const ss = Object.fromEntries(detailData.value.suites.map(s => [s.id, s.name]))
   const qs = Object.fromEntries((detailData.value.questions || []).map(q => [q.id, q]))
-  return detailData.value.results.map(r => ({
-    ...r,
-    model_name: ms[r.model_id],
-    suite_name: ss[r.suite_id],
-    question_title: qs[r.question_id]?.title || `#${r.question_id}`,
-    answer_type: qs[r.question_id]?.answer_type || ''
-  }))
+  return detailData.value.results.map(r => {
+    const q = qs[r.question_id] || {}
+    return {
+      ...r,
+      model_name: ms[r.model_id],
+      suite_name: ss[r.suite_id],
+      question_title: q.title || `#${r.question_id}`,
+      prompt: q.prompt || '',
+      image_url: q.image_url || '',
+      difficulty: q.difficulty || 'medium',
+      manual: !!q.manual,
+      answer_type: q.answer_type || ''
+    }
+  })
 })
+
+function rowImageSrc(row) {
+  if (imgSrcMap[row.id]) return imgSrcMap[row.id]
+  const fn = (row.image_url || '').split('/').pop().split('?')[0]
+  return fn ? `/api/images/${row.difficulty}/${fn}` : ''
+}
+
+function onRowImgError(row) {
+  if (row.image_url) imgSrcMap[row.id] = row.image_url
+}
+
+function openScoreDialog(row) {
+  scoreTarget.value = row
+  scoreValue.value = row.score ?? 0
+  scoreDialog.value = true
+}
+
+async function saveScore() {
+  await api.scoreResult(scoreTarget.value.id, scoreValue.value)
+  ElMessage.success('已保存人工评分')
+  scoreDialog.value = false
+  if (detailRun.value) await openDetailById(detailRun.value.id)
+}
 
 function extractHtml(answer) {
   let m = answer.match(/```(?:html|htm)\s*\n([\s\S]*?)```/i)

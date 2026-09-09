@@ -260,7 +260,12 @@ def craft_answer(prompt: str) -> str:
         return "```html\n" + GOOD_HTML.get(q["title"], "<html><body>demo</body></html>") + "\n```"
     if q.get("judge"):
         return "这是一段温暖、真诚且得体的模拟回复，充分体现了共情与支持。"
-    return json.loads(q["expected"])[0]
+    if q.get("manual"):
+        return "这是一段模拟的看图说话回复：画面主体清晰，构图自然，色彩层次分明，整体给人温馨而富有感染力的观感。"
+    expected = json.loads(q["expected"])
+    if expected:
+        return expected[0]
+    return "模拟答案"
 
 
 @app.post("/v1/chat/completions")

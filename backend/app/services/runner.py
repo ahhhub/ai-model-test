@@ -102,6 +102,8 @@ async def run_execute(run_id: int) -> None:
             max_score = q.get("max_score") or 1
             if error:
                 detail = error
+            elif q.get("manual"):
+                score, detail = None, "主观题·待人工查看"
             else:
                 if q.get("judge"):
                     if judge_model:

@@ -90,9 +90,24 @@ def delete_run(run_id: int):
     return {"ok": True}
 
 
+class ScoreIn(BaseModel):
+    score: float
+
+
+@router.put("/results/{result_id}/score")
+def set_result_score(result_id: int, payload: ScoreIn):
+    """主观题人工评分"""
+    row = db.query_one("SELECT * FROM run_results WHERE id=?", (result_id,))
+    if not row:
+        raise HTTPException(404, "结果不存在")
+    max_s = float(row["max_score"] or 1)
+    score = max(0.0, min(float(payload.score), max_s))
+    db.execute("UPDATE run_results SET score=? WHERE id=?", (score, result_id))
+    return db.query_one("SELECT * FROM run_results WHERE id=?", (result_id,))
+
+
 @router.get("/{run_id}/results")
 def get_results(run_id: int):
-    """按模型×题库聚合 + 明细"""
     run = db.query_one("SELECT * FROM runs WHERE id=?", (run_id,))
     if not run:
         raise HTTPException(404, "测试不存在")

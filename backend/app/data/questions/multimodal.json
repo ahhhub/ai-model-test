@@ -3,244 +3,184 @@
     "key": "multimodal",
     "name": "多模态能力（图像理解）",
     "category": "multimodal",
-    "description": "图片 + 提问的形式，考察模型视觉理解与跨模态推理能力。不支持图像输入的模型将记录为错误。",
+    "description": "图形验证码、文字提取、元素识别、看图说话、看图猜地区、识别出处等题型；客观题自动判分，主观题人工查看。图片覆盖风景、游戏、二次元、人物、动物、植物、学科等领域。",
     "sort_order": 6
   },
   "questions": [
     {
-      "title": "名画识别",
-      "prompt": "请看图片。图中这幅著名画作的作者是谁？\nA. 达·芬奇\nB. 梵高\nC. 毕加索\nD. 莫奈\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/mona_lisa.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 达·芬奇",
-        "B. 梵高",
-        "C. 毕加索",
-        "D. 莫奈"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/330px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg"
+      "title": "验证码识别一",
+      "prompt": "请看图片。这是一张图形验证码（第一张），请输出验证码中的 4 个字符（英文字母与数字），不要解释。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/captcha1.png",
+      "answer_type": "text",
+      "expected": ["7K3P"]
     },
     {
-      "title": "动物识别",
-      "prompt": "请看图片。图中的动物是什么？\nA. 狗\nB. 猫\nC. 兔子\nD. 狐狸\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/cat.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 狗",
-        "B. 猫",
-        "C. 兔子",
-        "D. 狐狸"
-      ],
-      "expected": [
-        "B"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg"
+      "title": "验证码识别二",
+      "prompt": "请看图片。这是一张图形验证码（第二张），请输出验证码中的 4 个字符（英文字母与数字），不要解释。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/captcha2.png",
+      "answer_type": "text",
+      "expected": ["M9XQ"]
     },
     {
-      "title": "地标建筑",
-      "prompt": "请看图片。图中的地标建筑位于哪座城市？\nA. 伦敦\nB. 纽约\nC. 巴黎\nD. 罗马\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/eiffel.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 伦敦",
-        "B. 纽约",
-        "C. 巴黎",
-        "D. 罗马"
-      ],
-      "expected": [
-        "C"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg"
+      "title": "文字提取·中文",
+      "prompt": "请看图片。请提取图中显示的中文文字内容，只输出文字本身，不要解释。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/text_cn.png",
+      "answer_type": "text",
+      "expected": ["人工智能改变世界"]
     },
     {
-      "title": "水果识别",
-      "prompt": "请看图片。图中的水果是什么？\nA. 香蕉\nB. 橙子\nC. 苹果\nD. 梨\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/apple.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 香蕉",
-        "B. 橙子",
-        "C. 苹果",
-        "D. 梨"
-      ],
-      "expected": [
-        "C"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/250px-Red_Apple.jpg"
+      "title": "文字提取·英文",
+      "prompt": "请看图片。请提取图中显示的英文文字内容（注意大小写），只输出文字本身，不要解释。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/text_en.png",
+      "answer_type": "text",
+      "expected": ["WELCOME TO BEIJING"]
     },
     {
-      "title": "斑马特征",
-      "prompt": "请看图片。图中的动物身上有什么显著特征？\nA. 黑白条纹\nB. 全身斑点\nC. 纯色皮毛\nD. 鳞片\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/zebra.jpg",
+      "title": "化学元素识别",
+      "prompt": "请看图片。图中元素周期表卡片所代表的元素是？\nA. 金\nB. 银\nC. 铜\nD. 铁\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/element_gold.png",
       "answer_type": "choice",
-      "options": [
-        "A. 黑白条纹",
-        "B. 全身斑点",
-        "C. 纯色皮毛",
-        "D. 鳞片"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Plains_Zebra_Equus_quagga.jpg/330px-Plains_Zebra_Equus_quagga.jpg"
+      "options": ["A. 金", "B. 银", "C. 铜", "D. 铁"],
+      "expected": ["A"]
     },
     {
-      "title": "交通信号灯",
-      "prompt": "请看图片。图中交通信号灯亮着的是什么颜色的灯？\nA. 绿色\nB. 红色\nC. 黄色\nD. 蓝色\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/traffic_light_red.jpg",
+      "title": "几何图形识别",
+      "prompt": "请看图片。图中展示的三角形属于哪一类？\nA. 直角三角形\nB. 等腰三角形\nC. 等边三角形\nD. 钝角三角形\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/triangle_345.png",
       "answer_type": "choice",
-      "options": [
-        "A. 绿色",
-        "B. 红色",
-        "C. 黄色",
-        "D. 蓝色"
-      ],
-      "expected": [
-        "B"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/LED_traffic_light_on_red.jpg/330px-LED_traffic_light_on_red.jpg"
+      "options": ["A. 直角三角形", "B. 等腰三角形", "C. 等边三角形", "D. 钝角三角形"],
+      "expected": ["A"]
     },
     {
-      "title": "名山识别",
-      "prompt": "请看图片。图中这座著名的山是？\nA. 富士山\nB. 珠穆朗玛峰\nC. 乞力马扎罗山\nD. 阿尔卑斯山\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/fuji.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 富士山",
-        "B. 珠穆朗玛峰",
-        "C. 乞力马扎罗山",
-        "D. 阿尔卑斯山"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mount_Fuji_at_sunset%2C_March_2025.jpg/330px-Mount_Fuji_at_sunset%2C_March_2025.jpg"
-    },
-    {
-      "title": "香蕉识别",
-      "prompt": "请看图片。图中的水果是什么？\nA. 苹果\nB. 香蕉\nC. 西瓜\nD. 葡萄\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/banana.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 苹果",
-        "B. 香蕉",
-        "C. 西瓜",
-        "D. 葡萄"
-      ],
-      "expected": [
-        "B"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/250px-Banana-Single.jpg"
-    },
-    {
-      "title": "图像描述",
-      "prompt": "请看图片。请用中文详细描述图中的动物，包括它的外观特征和姿态，不少于 40 字。",
+      "title": "看图说话·猫",
+      "prompt": "请看图片。请用中文写一段 60 字以上的看图说话，描述图中的动物、它的外观特征、姿态以及你推测它此刻的情绪。",
       "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/cat.jpg",
       "answer_type": "text",
-      "judge": true,
+      "manual": true,
       "max_score": 10,
-      "rubric": "评分维度（1-10 分）：1) 准确性：描述是否符合图片实际内容（5 分）；2) 完整性：是否覆盖外观特征与姿态（3 分）；3) 表达质量：语言是否通顺流畅（2 分）。",
-      "reference": "图中是一只猫，它有着橙白相间的毛发和尖尖的耳朵，眼睛炯炯有神，正蹲坐在地上，姿态警觉地注视着前方。",
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg"
+      "rubric": "人工查看要点：描述是否准确（动物与特征）、观察是否细致（姿态/神态）、表达是否流畅、是否合理推测情绪。"
     },
     {
-      "title": "斑马栖息地",
-      "prompt": "请看图片。图中的动物主要栖息在哪个大洲的草原上？\nA. 非洲\nB. 亚洲\nC. 南美洲\nD. 大洋洲\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/zebra.jpg",
-      "answer_type": "choice",
-      "options": [
-        "A. 非洲",
-        "B. 亚洲",
-        "C. 南美洲",
-        "D. 大洋洲"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Plains_Zebra_Equus_quagga.jpg/330px-Plains_Zebra_Equus_quagga.jpg"
+      "title": "看图说话·向日葵",
+      "prompt": "请看图片。请用中文写一段 60 字以上的看图说话，描述图中的植物、画面色彩以及这幅画面给你带来的感受。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/sunflower.jpg",
+      "answer_type": "text",
+      "manual": true,
+      "max_score": 10,
+      "rubric": "人工查看要点：植物识别是否准确、画面要素与色彩描述是否到位、感受表达是否自然。"
     },
     {
-      "title": "铁塔建成年代",
-      "prompt": "请看图片。图中这座著名铁塔建成并开放于哪一年？\nA. 1889\nB. 1789\nC. 1900\nD. 1851\n\n请只回答选项字母。",
+      "title": "看图说话·大峡谷",
+      "prompt": "请看图片。请用中文写一段 60 字以上的看图说话，描述图中的地貌景观、光影以及画面给你的整体印象。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/grand_canyon.jpg",
+      "answer_type": "text",
+      "manual": true,
+      "max_score": 10,
+      "rubric": "人工查看要点：地貌类型判断、自然要素描述（岩石/光线/色彩）、语言表达质量。"
+    },
+    {
+      "title": "猜地区·铁塔",
+      "prompt": "请看图片。图中这座地标建筑位于哪座城市？\nA. 法国巴黎\nB. 英国伦敦\nC. 美国纽约\nD. 意大利罗马\n\n请只回答选项字母。",
       "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/eiffel.jpg",
       "answer_type": "choice",
-      "options": [
-        "A. 1889",
-        "B. 1789",
-        "C. 1900",
-        "D. 1851"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg"
+      "options": ["A. 法国巴黎", "B. 英国伦敦", "C. 美国纽约", "D. 意大利罗马"],
+      "expected": ["A"]
     },
     {
-      "title": "蒙娜丽莎收藏地",
-      "prompt": "请看图片。图中这幅世界名画目前收藏于哪座博物馆？\nA. 卢浮宫\nB. 大英博物馆\nC. 纽约大都会博物馆\nD. 梵蒂冈博物馆\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/mona_lisa.jpg",
+      "title": "猜地区·大峡谷",
+      "prompt": "请看图片。图中这种壮观的地貌景观位于哪个国家？\nA. 美国\nB. 加拿大\nC. 澳大利亚\nD. 巴西\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/grand_canyon.jpg",
       "answer_type": "choice",
-      "options": [
-        "A. 卢浮宫",
-        "B. 大英博物馆",
-        "C. 纽约大都会博物馆",
-        "D. 梵蒂冈博物馆"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/330px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg"
+      "options": ["A. 美国", "B. 加拿大", "C. 澳大利亚", "D. 巴西"],
+      "expected": ["A"]
     },
     {
-      "title": "富士山国家",
+      "title": "猜地区·富士山",
       "prompt": "请看图片。图中这座著名山峰位于哪个国家？\nA. 日本\nB. 中国\nC. 韩国\nD. 印度尼西亚\n\n请只回答选项字母。",
       "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/fuji.jpg",
       "answer_type": "choice",
-      "options": [
-        "A. 日本",
-        "B. 中国",
-        "C. 韩国",
-        "D. 印度尼西亚"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mount_Fuji_at_sunset%2C_March_2025.jpg/330px-Mount_Fuji_at_sunset%2C_March_2025.jpg"
+      "options": ["A. 日本", "B. 中国", "C. 韩国", "D. 印度尼西亚"],
+      "expected": ["A"]
     },
     {
-      "title": "猫科分类",
-      "prompt": "请看图片。图中的动物在动物学分类上属于哪个科？\nA. 猫科\nB. 犬科\nC. 熊科\nD. 鼬科\n\n请只回答选项字母。",
-      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/cat.jpg",
+      "title": "识出处·名画",
+      "prompt": "请看图片。这幅著名画作的作者是？\nA. 达·芬奇\nB. 梵高\nC. 毕加索\nD. 莫奈\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/mona_lisa.jpg",
       "answer_type": "choice",
-      "options": [
-        "A. 猫科",
-        "B. 犬科",
-        "C. 熊科",
-        "D. 鼬科"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/250px-Cat03.jpg"
+      "options": ["A. 达·芬奇", "B. 梵高", "C. 毕加索", "D. 莫奈"],
+      "expected": ["A"]
     },
     {
-      "title": "苹果植物科",
-      "prompt": "请看图片。图中的水果所属的植物在植物学分类上属于哪个科？\nA. 蔷薇科\nB. 芸香科\nC. 茄科\nD. 葫芦科\n\n请只回答选项字母。",
+      "title": "识出处·浮世绘",
+      "prompt": "请看图片。这幅著名浮世绘版画《神奈川冲浪里》的作者是？\nA. 葛饰北斋\nB. 喜多川歌麿\nC. 安藤广重\nD. 东洲斋写乐\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/hokusai_wave.jpg",
+      "answer_type": "choice",
+      "options": ["A. 葛饰北斋", "B. 喜多川歌麿", "C. 安藤广重", "D. 东洲斋写乐"],
+      "expected": ["A"]
+    },
+    {
+      "title": "识风格·二次元",
+      "prompt": "请看图片。图中人物的绘画风格属于？\nA. 日式动漫（二次元）\nB. 古典油画\nC. 水墨画\nD. 像素画\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/anime_girl.png",
+      "answer_type": "choice",
+      "options": ["A. 日式动漫（二次元）", "B. 古典油画", "C. 水墨画", "D. 像素画"],
+      "expected": ["A"]
+    },
+    {
+      "title": "人物识别·物理学家",
+      "prompt": "请看图片。图中这位著名科学家是？\nA. 阿尔伯特·爱因斯坦\nB. 艾萨克·牛顿\nC. 查尔斯·达尔文\nD. 尼古拉·特斯拉\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/einstein.jpg",
+      "answer_type": "choice",
+      "options": ["A. 阿尔伯特·爱因斯坦", "B. 艾萨克·牛顿", "C. 查尔斯·达尔文", "D. 尼古拉·特斯拉"],
+      "expected": ["A"]
+    },
+    {
+      "title": "动物识别·狗",
+      "prompt": "请看图片。图中狗狗的品种是？\nA. 金毛寻回犬\nB. 哈士奇\nC. 萨摩耶\nD. 柯基\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/dog.jpg",
+      "answer_type": "choice",
+      "options": ["A. 金毛寻回犬", "B. 哈士奇", "C. 萨摩耶", "D. 柯基"],
+      "expected": ["A"]
+    },
+    {
+      "title": "动物识别·斑马",
+      "prompt": "请看图片。图中的动物是？\nA. 斑马\nB. 长颈鹿\nC. 大象\nD. 梅花鹿\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/zebra.jpg",
+      "answer_type": "choice",
+      "options": ["A. 斑马", "B. 长颈鹿", "C. 大象", "D. 梅花鹿"],
+      "expected": ["A"]
+    },
+    {
+      "title": "植物识别·向日葵",
+      "prompt": "请看图片。图中大片的植物是？\nA. 向日葵\nB. 菊花\nC. 郁金香\nD. 玫瑰\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/sunflower.jpg",
+      "answer_type": "choice",
+      "options": ["A. 向日葵", "B. 菊花", "C. 郁金香", "D. 玫瑰"],
+      "expected": ["A"]
+    },
+    {
+      "title": "游戏识别·魔方",
+      "prompt": "请看图片。图中这个经典益智玩具的名称是？\nA. 魔方\nB. 积木\nC. 拼图\nD. 陀螺\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/rubik.jpg",
+      "answer_type": "choice",
+      "options": ["A. 魔方", "B. 积木", "C. 拼图", "D. 陀螺"],
+      "expected": ["A"]
+    },
+    {
+      "title": "交通信号·红灯",
+      "prompt": "请看图片。图中交通信号灯亮着的是什么颜色的灯？\nA. 红色\nB. 绿色\nC. 黄色\nD. 蓝色\n\n请只回答选项字母。",
+      "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/traffic_light_red.jpg",
+      "answer_type": "choice",
+      "options": ["A. 红色", "B. 绿色", "C. 黄色", "D. 蓝色"],
+      "expected": ["A"]
+    },
+    {
+      "title": "水果识别·苹果",
+      "prompt": "请看图片。图中的水果是什么？\nA. 苹果\nB. 桃子\nC. 橙子\nD. 梨\n\n请只回答选项字母。",
       "image_url": "https://cdn.jsdelivr.net/gh/ahhhub/ai-model-test@main/images/apple.jpg",
       "answer_type": "choice",
-      "options": [
-        "A. 蔷薇科",
-        "B. 芸香科",
-        "C. 茄科",
-        "D. 葫芦科"
-      ],
-      "expected": [
-        "A"
-      ],
-      "image_url_backup": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/250px-Red_Apple.jpg"
+      "options": ["A. 苹果", "B. 桃子", "C. 橙子", "D. 梨"],
+      "expected": ["A"]
     }
   ]
 }

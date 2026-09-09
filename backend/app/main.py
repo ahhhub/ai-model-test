@@ -7,12 +7,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import database
-from .config import FRONTEND_DIST
+from .config import FRONTEND_DIST, IMAGES_DIR
 from .routers import models, reports, runs, suites
 
 database.init_db()
 
-app = FastAPI(title="AI 模型评测平台", version="1.0.0")
+app = FastAPI(title="AI 模型评测平台", version="1.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,6 +26,10 @@ app.include_router(models.router)
 app.include_router(suites.router)
 app.include_router(runs.router)
 app.include_router(reports.router)
+
+# 本地图片库（前端预览与人工查看用）
+if IMAGES_DIR.exists():
+    app.mount("/api/images", StaticFiles(directory=str(IMAGES_DIR)), name="images")
 
 
 @app.get("/api/health")

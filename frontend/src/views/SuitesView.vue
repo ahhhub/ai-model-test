@@ -45,11 +45,11 @@
                 @row-click="openDetail" style="cursor: pointer">
               <el-table-column type="index" label="#" width="45" />
               <el-table-column prop="title" label="题目" min-width="130" show-overflow-tooltip />
-              <el-table-column label="类型" width="80">
+              <el-table-column label="类型" width="90">
                 <template #default="{ row }">
-                  <el-tag size="small" :type="row.judge ? 'warning' : 'info'">
-                    {{ row.judge ? '裁判评分' : typeName(row.answer_type) }}
-                  </el-tag>
+                  <el-tag v-if="row.manual" size="small" type="warning">人工查看</el-tag>
+                  <el-tag v-else-if="row.judge" size="small" type="warning">裁判评分</el-tag>
+                  <el-tag v-else size="small" type="info">{{ typeName(row.answer_type) }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="难度" width="80">
@@ -114,9 +114,9 @@
     <el-dialog v-model="detailVisible" :title="detailQuestion?.title || '题目详情'" width="720px" top="6vh">
       <template v-if="detailQuestion">
         <div style="display: flex; gap: 8px; margin-bottom: 12px">
-          <el-tag size="small" :type="detailQuestion.judge ? 'warning' : 'info'">
-            {{ detailQuestion.judge ? '裁判评分' : typeName(detailQuestion.answer_type) }}
-          </el-tag>
+          <el-tag v-if="detailQuestion.manual" size="small" type="warning">人工查看</el-tag>
+          <el-tag v-else-if="detailQuestion.judge" size="small" type="warning">裁判评分</el-tag>
+          <el-tag v-else size="small" type="info">{{ typeName(detailQuestion.answer_type) }}</el-tag>
           <el-tag size="small" :type="diffTag(detailQuestion.difficulty)">{{ DIFF[detailQuestion.difficulty] || detailQuestion.difficulty }}</el-tag>
           <el-tag v-if="detailQuestion.max_score > 1" size="small" type="danger">满分 {{ detailQuestion.max_score }}</el-tag>
         </div>
@@ -125,15 +125,16 @@
             <div style="white-space: pre-wrap">{{ detailQuestion.prompt }}</div>
           </el-descriptions-item>
           <el-descriptions-item v-if="detailQuestion.image_url" label="图片">
-            <el-image :src="detailQuestion.image_url" style="max-width: 320px; max-height: 220px" fit="contain" />
+            <el-image :src="detailImgSrc" style="max-width: 360px; max-height: 240px" fit="contain"
+              @error="detailImgSrc = detailQuestion.image_url" />
           </el-descriptions-item>
           <el-descriptions-item v-if="detailQuestion.options?.length" label="选项">
             <div v-for="(o, i) in detailQuestion.options" :key="i" :style="optionStyle(o)">{{ o }}</div>
           </el-descriptions-item>
-          <el-descriptions-item v-if="!detailQuestion.judge" label="标准答案">
+          <el-descriptions-item v-if="!detailQuestion.judge && !detailQuestion.manual" label="标准答案">
             <b style="color: #67c23a">{{ formatExpected(detailQuestion) }}</b>
           </el-descriptions-item>
-          <el-descriptions-item v-if="detailQuestion.judge" label="评分标准">
+          <el-descriptions-item v-if="detailQuestion.judge || detailQuestion.manual" :label="detailQuestion.manual ? '人工查看要点' : '评分标准'">
             <div style="white-space: pre-wrap">{{ detailQuestion.rubric || '—' }}</div>
           </el-descriptions-item>
           <el-descriptions-item v-if="detailQuestion.judge" label="期望/示例答案">
@@ -170,6 +171,7 @@ const expectedText = ref('')
 const diffFilter = ref('')
 const detailVisible = ref(false)
 const detailQuestion = ref(null)
+const detailImgSrc = ref('')
 
 const DIFF = { easy: '简单', medium: '中等', medium_high: '中高', hard: '高难', extreme: '极难' }
 const diffTag = d => ({ easy: 'success', medium: 'info', medium_high: 'warning', hard: 'danger', extreme: 'danger' })[d] || 'info'
@@ -180,7 +182,14 @@ const filteredQuestions = computed(() =>
 
 function openDetail(row) {
   detailQuestion.value = row
+  detailImgSrc.value = row.image_url ? localImagePath(row) : ''
   detailVisible.value = true
+}
+
+function localImagePath(q) {
+  const fn = (q.image_url || '').split('/').pop().split('?')[0]
+  if (!fn) return ''
+  return `/api/images/${q.difficulty || 'medium'}/${fn}`
 }
 
 function formatExpected(q) {

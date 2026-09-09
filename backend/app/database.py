@@ -10,6 +10,13 @@ from .config import DATA_DIR, DB_PATH, QUESTIONS_DIR
 DIFFICULTIES_FILE = DATA_DIR / "difficulties.json"
 DIFFICULTY_LEVELS = ("easy", "medium", "medium_high", "hard", "extreme")
 
+# 多模态题库重构后需要移除的旧题目标题（保留历史评测记录，只删旧题）
+REMOVED_MULTIMODAL_TITLES = {
+    "名画识别", "动物识别", "地标建筑", "水果识别", "斑马特征", "交通信号灯",
+    "名山识别", "香蕉识别", "图像描述", "斑马栖息地", "铁塔建成年代",
+    "蒙娜丽莎收藏地", "富士山国家", "猫科分类", "苹果植物科",
+}
+
 _lock = threading.RLock()
 
 
@@ -60,6 +67,7 @@ def init_db() -> None:
                 rubric TEXT DEFAULT '',
                 reference TEXT DEFAULT '',
                 judge INTEGER DEFAULT 0,
+                manual INTEGER DEFAULT 0,
                 max_score REAL DEFAULT 1,
                 difficulty TEXT NOT NULL DEFAULT 'easy'
             );
@@ -103,6 +111,8 @@ def init_db() -> None:
             conn.execute("ALTER TABLE questions ADD COLUMN difficulty TEXT NOT NULL DEFAULT 'easy'")
         if "image_url_backup" not in qcols:
             conn.execute("ALTER TABLE questions ADD COLUMN image_url_backup TEXT DEFAULT ''")
+        if "manual" not in qcols:
+            conn.execute("ALTER TABLE questions ADD COLUMN manual INTEGER DEFAULT 0")
         # 老库迁移：runs 表补充 difficulty 列
         rcols = {row["name"] for row in conn.execute("PRAGMA table_info(runs)").fetchall()}
         if "difficulty" not in rcols:
@@ -151,8 +161,8 @@ def seed_questions() -> None:
                 conn.execute(
                     """INSERT INTO questions
                        (suite_id,title,prompt,image_url,image_url_backup,answer_type,options,expected,
-                        test_harness,rubric,reference,judge,max_score)
-                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        test_harness,rubric,reference,judge,manual,max_score)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                     (
                         suite_id,
                         q.get("title", ""),
@@ -166,6 +176,7 @@ def seed_questions() -> None:
                         q.get("rubric", ""),
                         q.get("reference", ""),
                         1 if q.get("judge") else 0,
+                        1 if q.get("manual") else 0,
                         q.get("max_score", 1),
                     ),
                 )
@@ -197,19 +208,29 @@ def migrate_questions() -> None:
             "UPDATE suites SET name=?, description=? WHERE id=?",
             (suite.get("name"), suite.get("description", ""), suite_id),
         )
-        existing = {
-            r["prompt"]: r["id"]
-            for r in query("SELECT id, prompt FROM questions WHERE suite_id=?", (suite_id,))
+        # 多模态题库重构：先删除已下线的旧题目（再按标题去重插入新题）
+        if suite.get("key") == "multimodal" and REMOVED_MULTIMODAL_TITLES:
+            for t in REMOVED_MULTIMODAL_TITLES:
+                execute("DELETE FROM questions WHERE suite_id=? AND title=?", (suite_id, t))
+        existing_by_title = {
+            r["title"]: r["id"]
+            for r in query("SELECT id, title FROM questions WHERE suite_id=?", (suite_id,))
         }
-        # 同步既有种子题目的图片地址（主/备），用户自定义题目不受影响
+        # 同步既有种子题目的题干/图片地址（按标题匹配），用户自定义题目标题不同则不受影响
         for q in questions:
-            qid = existing.get(q.get("prompt"))
-            if qid and (q.get("image_url") or q.get("image_url_backup")):
+            qid = existing_by_title.get(q.get("title"))
+            if qid:
                 execute(
-                    "UPDATE questions SET image_url=?, image_url_backup=? WHERE id=?",
-                    (q.get("image_url", ""), q.get("image_url_backup", ""), qid),
+                    "UPDATE questions SET title=?, prompt=?, image_url=?, image_url_backup=? WHERE id=?",
+                    (
+                        q.get("title", ""),
+                        q.get("prompt", ""),
+                        q.get("image_url", ""),
+                        q.get("image_url_backup", ""),
+                        qid,
+                    ),
                 )
-        new_items = [q for q in questions if q.get("prompt") not in existing]
+        new_items = [q for q in questions if q.get("title") not in existing_by_title]
         if not new_items:
             continue
         params: list[tuple] = []
@@ -228,14 +249,15 @@ def migrate_questions() -> None:
                     q.get("rubric", ""),
                     q.get("reference", ""),
                     1 if q.get("judge") else 0,
+                    1 if q.get("manual") else 0,
                     q.get("max_score", 1),
                 )
             )
         executemany(
             """INSERT INTO questions
                (suite_id,title,prompt,image_url,image_url_backup,answer_type,options,expected,
-                test_harness,rubric,reference,judge,max_score)
-               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                test_harness,rubric,reference,judge,manual,max_score)
+               VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             params,
         )
 
