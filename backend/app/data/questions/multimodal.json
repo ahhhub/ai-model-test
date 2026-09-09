@@ -80,6 +80,30 @@
       "max_score": 10,
       "rubric": "评分维度（1-10 分）：1) 准确性：描述是否符合图片实际内容（5 分）；2) 完整性：是否覆盖外观特征与姿态（3 分）；3) 表达质量：语言是否通顺流畅（2 分）。",
       "reference": "图中是一只猫，它有着橙白相间的毛发和尖尖的耳朵，眼睛炯炯有神，正蹲坐在地上，姿态警觉地注视着前方。"
+    },
+    {
+      "title": "斑马栖息地",
+      "prompt": "请看图片。图中的动物主要栖息在哪个大洲的草原上？\nA. 非洲\nB. 亚洲\nC. 南美洲\nD. 大洋洲\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Plains_Zebra_Equus_quagga.jpg/330px-Plains_Zebra_Equus_quagga.jpg",
+      "answer_type": "choice",
+      "options": ["A. 非洲", "B. 亚洲", "C. 南美洲", "D. 大洋洲"],
+      "expected": ["A"]
+    },
+    {
+      "title": "铁塔建成年代",
+      "prompt": "请看图片。图中这座著名铁塔建成并开放于哪一年？\nA. 1889\nB. 1789\nC. 1900\nD. 1851\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/250px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
+      "answer_type": "choice",
+      "options": ["A. 1889", "B. 1789", "C. 1900", "D. 1851"],
+      "expected": ["A"]
+    },
+    {
+      "title": "蒙娜丽莎收藏地",
+      "prompt": "请看图片。图中这幅世界名画目前收藏于哪座博物馆？\nA. 卢浮宫\nB. 大英博物馆\nC. 纽约大都会博物馆\nD. 梵蒂冈博物馆\n\n请只回答选项字母。",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/330px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+      "answer_type": "choice",
+      "options": ["A. 卢浮宫", "B. 大英博物馆", "C. 纽约大都会博物馆", "D. 梵蒂冈博物馆"],
+      "expected": ["A"]
     }
   ]
 }

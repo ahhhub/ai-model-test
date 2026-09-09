@@ -8,7 +8,11 @@
     "斐波那契": "easy",
     "互动拍立得相机": "medium",
     "macOS 风格网页操作系统": "medium",
-    "科幻飞船驾驶舱 HUD": "medium"
+    "科幻飞船驾驶舱 HUD": "medium",
+    "合并区间": "medium_high",
+    "接雨水": "hard",
+    "最长回文子串": "hard",
+    "N皇后计数": "extreme"
   },
   "emotion": {
     "安慰受批评的同事": "easy",
@@ -20,7 +24,9 @@
     "鼓励方案被否的同事": "medium",
     "回应与父母争吵的朋友": "medium",
     "回应陌生人的道歉": "medium",
-    "安慰失恋的好友": "medium"
+    "安慰失恋的好友": "medium",
+    "客户投诉回应": "hard",
+    "团队冲突调解": "extreme"
   },
   "general": {
     "水的化学式": "easy",
@@ -42,7 +48,10 @@
     "DNA 结构": "medium",
     "恐龙灭绝": "medium",
     "联合国总部": "medium",
-    "二进制": "medium"
+    "二进制": "medium",
+    "图灵测试": "medium_high",
+    "汉谟拉比法典": "hard",
+    "宇宙微波背景": "extreme"
   },
   "logic": {
     "三段论": "easy",
@@ -54,7 +63,10 @@
     "叫声类比": "easy",
     "年龄差": "easy",
     "天平称球": "medium",
-    "骑士与骗子": "medium"
+    "骑士与骗子": "medium",
+    "阶乘数列": "medium_high",
+    "标签全错的盒子": "hard",
+    "三人的真话": "extreme"
   },
   "math": {
     "苹果问题": "easy",
@@ -66,7 +78,10 @@
     "打折计算": "medium",
     "解方程": "medium",
     "等差数列": "medium",
-    "火车行程": "medium_high"
+    "火车行程": "medium_high",
+    "盐水混合": "medium_high",
+    "复利计算": "hard",
+    "蓄水池问题": "extreme"
   },
   "multimodal": {
     "名画识别": "easy",
@@ -77,6 +92,9 @@
     "交通信号灯": "easy",
     "香蕉识别": "easy",
     "名山识别": "medium",
-    "图像描述": "medium"
+    "图像描述": "medium",
+    "斑马栖息地": "medium_high",
+    "铁塔建成年代": "hard",
+    "蒙娜丽莎收藏地": "extreme"
   }
 }

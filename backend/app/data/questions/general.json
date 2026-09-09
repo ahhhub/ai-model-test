@@ -26,6 +26,9 @@
     {"title": "恐龙灭绝", "prompt": "非鸟类恐龙灭绝大约发生在多少年前？\nA. 6600 万年前\nB. 6.6 亿年前\nC. 6.6 万年前\nD. 660 年前\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 6600 万年前", "B. 6.6 亿年前", "C. 6.6 万年前", "D. 660 年前"], "expected": ["A"]},
     {"title": "联合国总部", "prompt": "联合国总部位于哪座城市？\nA. 日内瓦\nB. 巴黎\nC. 纽约\nD. 伦敦\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 日内瓦", "B. 巴黎", "C. 纽约", "D. 伦敦"], "expected": ["C"]},
     {"title": "二进制", "prompt": "十进制数 15 的二进制表示是？\nA. 1111\nB. 1100\nC. 1010\nD. 1001\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 1111", "B. 1100", "C. 1010", "D. 1001"], "expected": ["A"]},
-    {"title": "登月第一人", "prompt": "人类历史上第一个登上月球的人是？\nA. 加加林\nB. 阿姆斯特朗\nC. 奥尔德林\nD. 杨利伟\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 加加林", "B. 阿姆斯特朗", "C. 奥尔德林", "D. 杨利伟"], "expected": ["B"]}
+    {"title": "登月第一人", "prompt": "人类历史上第一个登上月球的人是？\nA. 加加林\nB. 阿姆斯特朗\nC. 奥尔德林\nD. 杨利伟\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 加加林", "B. 阿姆斯特朗", "C. 奥尔德林", "D. 杨利伟"], "expected": ["B"]},
+    {"title": "图灵测试", "prompt": "著名的图灵测试（用于判断机器是否具有智能）是由哪位科学家提出的？\nA. 冯·诺依曼\nB. 艾伦·图灵\nC. 克劳德·香农\nD. 牛顿\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 冯·诺依曼", "B. 艾伦·图灵", "C. 克劳德·香农", "D. 牛顿"], "expected": ["B"]},
+    {"title": "汉谟拉比法典", "prompt": "世界上现存第一部比较完整的成文法典是？\nA. 十二铜表法\nB. 汉谟拉比法典\nC. 拿破仑法典\nD. 查士丁尼法典\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 十二铜表法", "B. 汉谟拉比法典", "C. 拿破仑法典", "D. 查士丁尼法典"], "expected": ["B"]},
+    {"title": "宇宙微波背景", "prompt": "宇宙微波背景辐射（大爆炸的余辉）的温度大约是多少？\nA. 约 2.7K\nB. 约 273K\nC. 约 27K\nD. 约 0.27K\n\n请只回答选项字母。", "answer_type": "choice", "options": ["A. 约 2.7K", "B. 约 273K", "C. 约 27K", "D. 约 0.27K"], "expected": ["A"]}
   ]
 }

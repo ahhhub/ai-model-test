@@ -12,11 +12,16 @@ router = APIRouter(prefix="/api", tags=["suites"])
 @router.get("/suites")
 def list_suites():
     suites = db.query("SELECT * FROM suites ORDER BY sort_order, id")
+    # 每个题库的难度分布
+    dist_rows = db.query(
+        "SELECT suite_id, difficulty, COUNT(*) AS c FROM questions GROUP BY suite_id, difficulty"
+    )
+    dist: dict[int, dict[str, int]] = {}
+    for r in dist_rows:
+        dist.setdefault(r["suite_id"], {})[r["difficulty"]] = r["c"]
     for s in suites:
-        row = db.query_one(
-            "SELECT COUNT(*) AS c FROM questions WHERE suite_id=?", (s["id"],)
-        )
-        s["question_count"] = row["c"] if row else 0
+        s["difficulty_counts"] = dist.get(s["id"], {})
+        s["question_count"] = sum(s["difficulty_counts"].values())
     return suites
 
 

@@ -12,7 +12,14 @@
                 <el-tag size="small" :type="tagType(row.category)">{{ row.category }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="question_count" label="题目数" width="90" />
+            <el-table-column label="题目数" width="110">
+              <template #default="{ row }">
+                <span v-if="!diffFilter">{{ row.question_count }}</span>
+                <span v-else :style="{ color: '#409EFF', fontWeight: 600 }">
+                  {{ row.difficulty_counts?.[diffFilter] || 0 }} / {{ row.question_count }}
+                </span>
+              </template>
+            </el-table-column>
             <el-table-column prop="description" label="说明" min-width="220" show-overflow-tooltip />
           </el-table>
         </el-card>

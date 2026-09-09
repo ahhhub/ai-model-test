@@ -18,6 +18,10 @@ GOOD_CODE = {
     "反转单词顺序": '```python\ndef solution(s):\n    return " ".join(s.split()[::-1])\n```',
     "阶乘": '```python\ndef solution(n):\n    return 1 if n==0 else n*solution(n-1)\n```',
     "斐波那契": '```python\ndef solution(n):\n    a,b=0,1\n    for _ in range(n):\n        a,b=b,a+b\n    return a\n```',
+    "合并区间": '```python\ndef solution(intervals):\n    intervals.sort(key=lambda x: x[0])\n    out = []\n    for s, e in intervals:\n        if not out or out[-1][1] < s:\n            out.append([s, e])\n        else:\n            out[-1][1] = max(out[-1][1], e)\n    return out\n```',
+    "接雨水": '```python\ndef solution(height):\n    left, right = 0, len(height) - 1\n    lm = rm = total = 0\n    while left < right:\n        if height[left] < height[right]:\n            lm = max(lm, height[left])\n            total += lm - height[left]\n            left += 1\n        else:\n            rm = max(rm, height[right])\n            total += rm - height[right]\n            right -= 1\n    return total\n```',
+    "最长回文子串": '```python\ndef solution(s):\n    best = ""\n    for i in range(len(s)):\n        for l, r in ((i, i), (i, i + 1)):\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                l -= 1; r += 1\n            if r - l - 1 > len(best):\n                best = s[l + 1:r]\n    return best\n```',
+    "N皇后计数": '```python\ndef solution(n):\n    cols, d1, d2 = set(), set(), set()\n    def dfs(row):\n        if row == n:\n            return 1\n        cnt = 0\n        for col in range(n):\n            if col in cols or (row - col) in d1 or (row + col) in d2:\n                continue\n            cols.add(col); d1.add(row - col); d2.add(row + col)\n            cnt += dfs(row + 1)\n            cols.remove(col); d1.remove(row - col); d2.remove(row + col)\n        return cnt\n    return dfs(0)\n```',
 }
 
 
@@ -236,7 +240,9 @@ def craft_answer(prompt: str) -> str:
     if "pong" in prompt:
         return "pong"
     if "AI 评测裁判" in prompt:
-        return '{"score": 4, "reason": "空间关系清晰，光影克制，纵深感与质感到位。"}'
+        m = re.search(r"0 到 (\d+(?:\.\d+)?) 之间的数字", prompt)
+        ms = float(m.group(1)) if m else 4.0
+        return json.dumps({"score": ms, "reason": "回答准确完整，表达自然流畅。"}, ensure_ascii=False)
     q = find_question(prompt)
     if not q:
         return "模拟答案"

@@ -14,16 +14,16 @@
                 <el-option v-for="m in models" :key="m.id" :label="`${m.display_name}（${m.name}）`" :value="m.id" />
               </el-select>
             </el-form-item>
-            <el-form-item label="测试项目（可多选）" required>
-              <el-select v-model="createForm.suite_ids" multiple collapse-tags style="width: 100%"
-                placeholder="选择测试项目">
-                <el-option v-for="s in suites" :key="s.id" :label="`${s.name}（${s.question_count} 题）`" :value="s.id" />
-              </el-select>
-            </el-form-item>
             <el-form-item label="题目难度">
               <el-select v-model="createForm.difficulty" style="width: 100%">
                 <el-option label="全部难度" value="" />
                 <el-option v-for="(label, key) in DIFF" :key="key" :label="label" :value="key" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="测试项目（可多选）" required>
+              <el-select v-model="createForm.suite_ids" multiple collapse-tags style="width: 100%"
+                placeholder="选择测试项目">
+                <el-option v-for="s in suites" :key="s.id" :label="suiteLabel(s)" :value="s.id" />
               </el-select>
             </el-form-item>
             <el-form-item label="裁判模型（用于主观题自动评分）">
@@ -149,6 +149,13 @@ let pollTimer = null
 
 const createForm = reactive({ name: '', model_ids: [], suite_ids: [], judge_model_id: null, difficulty: '' })
 const DIFF = { easy: '简单', medium: '中等', medium_high: '中高', hard: '高难', extreme: '极难' }
+
+function suiteLabel(s) {
+  if (createForm.difficulty && s.difficulty_counts) {
+    return `${s.name}（${s.difficulty_counts[createForm.difficulty] || 0} 题）`
+  }
+  return `${s.name}（${s.question_count} 题）`
+}
 
 const statusName = s => ({ pending: '排队中', running: '运行中', completed: '已完成', stopped: '已停止', failed: '失败' })[s] || s
 const statusType = s => ({ pending: 'info', running: 'warning', completed: 'success', stopped: 'info', failed: 'danger' })[s] || 'info'
