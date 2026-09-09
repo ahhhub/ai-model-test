@@ -37,11 +37,14 @@ async def start_run(run_id: int) -> None:
 
 
 def _is_image_error(error: str) -> bool:
-    """判断错误是否与图片下载/加载有关"""
+    """判断错误是否与图片下载/加载有关（仅对带备用地址的图片题触发重试）"""
     low = (error or "").lower()
-    return ("image" in low or "图片" in error) and any(
-        k in low for k in ("download", "403", "failed", "load", "loading", "无法", "下载", "失败")
-    )
+    if "image" in low or "图片" in error:
+        return any(k in low for k in ("download", "403", "failed", "load", "loading", "无法", "下载", "失败"))
+    # 图片题上出现 403/下载类错误，同样视为图片问题
+    if "403" in low or "forbidden" in low:
+        return "url" in low or "http" in low
+    return any(k in low for k in ("failed to download", "下载失败", "download failed"))
 
 
 async def run_execute(run_id: int) -> None:
