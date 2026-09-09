@@ -35,7 +35,7 @@ async def judge_answer(judge_model: dict, question: dict, answer: str) -> tuple[
         reference=reference,
         max_score=max_score,
     )
-    text, _, error = await llm.chat_once(judge_model, [{"role": "user", "content": prompt}])
+    text, _, error, _ = await llm.chat_once(judge_model, [{"role": "user", "content": prompt}])
     if error or not text:
         return 0.0, f"裁判调用失败: {error or '无输出'}"
     # 提取 JSON

@@ -15,6 +15,7 @@ class RunIn(BaseModel):
     model_ids: list[int]
     suite_ids: list[int]
     judge_model_id: int | None = None
+    difficulty: str = ""
 
 
 @router.get("")
@@ -28,6 +29,9 @@ async def create_run(payload: RunIn):
         raise HTTPException(400, "请至少选择一个参与模型")
     if not payload.suite_ids:
         raise HTTPException(400, "请至少选择一个测试项目")
+    diff = payload.difficulty.strip()
+    if diff and diff not in db.DIFFICULTY_LEVELS:
+        raise HTTPException(400, "无效的难度等级")
     for mid in payload.model_ids:
         if not db.query_one("SELECT id FROM models WHERE id=?", (mid,)):
             raise HTTPException(404, f"模型 {mid} 不存在")
@@ -39,12 +43,13 @@ async def create_run(payload: RunIn):
     ):
         raise HTTPException(404, "裁判模型不存在")
     run_id = db.execute(
-        "INSERT INTO runs(name,model_ids,suite_ids,judge_model_id,status,total,done,created_at) VALUES(?,?,?,?,?,?,?,?)",
+        "INSERT INTO runs(name,model_ids,suite_ids,judge_model_id,difficulty,status,total,done,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
         (
             payload.name.strip() or f"评测 {db.now()}",
             json.dumps(payload.model_ids),
             json.dumps(payload.suite_ids),
             payload.judge_model_id,
+            diff,
             "pending",
             0,
             0,

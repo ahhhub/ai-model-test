@@ -7,6 +7,9 @@ from pathlib import Path
 
 from .config import DATA_DIR, DB_PATH, QUESTIONS_DIR
 
+DIFFICULTIES_FILE = DATA_DIR / "difficulties.json"
+DIFFICULTY_LEVELS = ("easy", "medium", "medium_high", "hard", "extreme")
+
 _lock = threading.RLock()
 
 
@@ -56,7 +59,8 @@ def init_db() -> None:
                 rubric TEXT DEFAULT '',
                 reference TEXT DEFAULT '',
                 judge INTEGER DEFAULT 0,
-                max_score REAL DEFAULT 1
+                max_score REAL DEFAULT 1,
+                difficulty TEXT NOT NULL DEFAULT 'easy'
             );
             CREATE TABLE IF NOT EXISTS runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,6 +68,7 @@ def init_db() -> None:
                 model_ids TEXT NOT NULL,
                 suite_ids TEXT NOT NULL,
                 judge_model_id INTEGER,
+                difficulty TEXT NOT NULL DEFAULT '',
                 status TEXT DEFAULT 'pending',
                 total INTEGER DEFAULT 0,
                 done INTEGER DEFAULT 0,
@@ -80,6 +85,7 @@ def init_db() -> None:
                 score REAL,
                 max_score REAL,
                 latency_ms REAL,
+                output_tokens INTEGER,
                 error TEXT,
                 detail TEXT
             );
@@ -90,8 +96,21 @@ def init_db() -> None:
         cols = {row["name"] for row in conn.execute("PRAGMA table_info(models)").fetchall()}
         if "disable_thinking" not in cols:
             conn.execute("ALTER TABLE models ADD COLUMN disable_thinking INTEGER NOT NULL DEFAULT 1")
+        # 老库迁移：questions 表补充 difficulty 列
+        qcols = {row["name"] for row in conn.execute("PRAGMA table_info(questions)").fetchall()}
+        if "difficulty" not in qcols:
+            conn.execute("ALTER TABLE questions ADD COLUMN difficulty TEXT NOT NULL DEFAULT 'easy'")
+        # 老库迁移：runs 表补充 difficulty 列
+        rcols = {row["name"] for row in conn.execute("PRAGMA table_info(runs)").fetchall()}
+        if "difficulty" not in rcols:
+            conn.execute("ALTER TABLE runs ADD COLUMN difficulty TEXT NOT NULL DEFAULT ''")
+        # 老库迁移：run_results 表补充 output_tokens 列
+        rrcols = {row["name"] for row in conn.execute("PRAGMA table_info(run_results)").fetchall()}
+        if "output_tokens" not in rrcols:
+            conn.execute("ALTER TABLE run_results ADD COLUMN output_tokens INTEGER")
     seed_questions()
     migrate_questions()
+    migrate_difficulties()
 
 
 # ---------------- 题库种子数据 ----------------
@@ -206,6 +225,27 @@ def migrate_questions() -> None:
                VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
             params,
         )
+
+
+def migrate_difficulties() -> None:
+    """按 difficulties.json 给题目标注难度（按题库 key + 题目标题匹配，幂等）"""
+    if not DIFFICULTIES_FILE.exists():
+        return
+    try:
+        data = json.loads(DIFFICULTIES_FILE.read_text(encoding="utf-8"))
+    except Exception:
+        return
+    for suite_key, mapping in data.items():
+        suite_row = query_one("SELECT id FROM suites WHERE key=?", (suite_key,))
+        if not suite_row:
+            continue
+        for title, diff in mapping.items():
+            if diff not in DIFFICULTY_LEVELS:
+                continue
+            execute(
+                "UPDATE questions SET difficulty=? WHERE suite_id=? AND title=?",
+                (diff, suite_row["id"], title),
+            )
 
 
 # ---------------- 通用查询辅助 ----------------

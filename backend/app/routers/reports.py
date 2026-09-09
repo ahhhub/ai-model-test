@@ -42,7 +42,7 @@ def _model_suite_scores(run_id: int) -> tuple[dict, dict, list]:
 
 
 def _compute_scores(models: dict, suites: dict, rows: list[dict]) -> list[dict]:
-    """按模型×题库聚合平均分（0-100）"""
+    """按模型×题库聚合平均分（0-100）与耗时/输出速度指标"""
     agg: dict[int, dict[int, list[float]]] = defaultdict(lambda: defaultdict(list))
     for r in rows:
         if r["max_score"] and r["score"] is not None:
@@ -63,6 +63,18 @@ def _compute_scores(models: dict, suites: dict, rows: list[dict]) -> list[dict]:
                 }
                 suite_scores.append(s)
         entry["overall"] = round(sum(suite_scores) / len(suite_scores), 1) if suite_scores else None
+        # 耗时与输出速度统计（仅统计成功作答且记录耗时的题）
+        model_rows = [r for r in rows if r["model_id"] == mid and not r["error"]]
+        latencies = [r["latency_ms"] for r in model_rows if r["latency_ms"] is not None]
+        tokens = [r["output_tokens"] for r in model_rows if r["output_tokens"] is not None]
+        total_latency = sum(latencies)
+        entry["total_latency_ms"] = round(total_latency, 0)
+        entry["avg_latency_ms"] = round(total_latency / len(latencies), 1) if latencies else None
+        entry["output_tokens"] = sum(tokens) if tokens else None
+        if total_latency and tokens:
+            entry["output_speed_tps"] = round(sum(tokens) / (total_latency / 1000.0), 2)
+        else:
+            entry["output_speed_tps"] = None
         result.append(entry)
     result.sort(key=lambda x: -(x["overall"] or 0))
     return result

@@ -68,7 +68,13 @@ async def test_connectivity(model_id: int):
     model = db.query_one("SELECT * FROM models WHERE id=?", (model_id,))
     if not model:
         raise HTTPException(404, "模型不存在")
-    text, latency, error = await llm.chat_once(model, [{"role": "user", "content": "请回复：pong"}])
+    text, latency, error, usage = await llm.chat_once(model, [{"role": "user", "content": "请回复：pong"}])
     if error:
         return {"ok": False, "latency_ms": round(latency, 1), "reply": "", "error": error}
-    return {"ok": True, "latency_ms": round(latency, 1), "reply": text[:200], "error": ""}
+    return {
+        "ok": True,
+        "latency_ms": round(latency, 1),
+        "reply": text[:200],
+        "error": "",
+        "output_tokens": (usage or {}).get("completion_tokens"),
+    }

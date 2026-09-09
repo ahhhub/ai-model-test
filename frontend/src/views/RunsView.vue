@@ -20,6 +20,12 @@
                 <el-option v-for="s in suites" :key="s.id" :label="`${s.name}（${s.question_count} 题）`" :value="s.id" />
               </el-select>
             </el-form-item>
+            <el-form-item label="题目难度">
+              <el-select v-model="createForm.difficulty" style="width: 100%">
+                <el-option label="全部难度" value="" />
+                <el-option v-for="(label, key) in DIFF" :key="key" :label="label" :value="key" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="裁判模型（用于主观题自动评分）">
               <el-select v-model="createForm.judge_model_id" clearable style="width: 100%" placeholder="可选，不选则主观题跳过评分">
                 <el-option v-for="m in models" :key="m.id" :label="`${m.display_name}（${m.name}）`" :value="m.id" />
@@ -41,7 +47,10 @@
           </div>
           <el-table :data="runs" v-loading="loading" border stripe @row-click="openDetail" style="cursor: pointer">
             <el-table-column prop="id" label="ID" width="55" />
-            <el-table-column prop="name" label="名称" min-width="150" />
+            <el-table-column prop="name" label="名称" min-width="140" />
+            <el-table-column label="难度" width="90">
+              <template #default="{ row }">{{ row.difficulty ? DIFF[row.difficulty] || row.difficulty : '全部' }}</template>
+            </el-table-column>
             <el-table-column label="状态" width="100">
               <template #default="{ row }">
                 <el-tag :type="statusType(row.status)">{{ statusName(row.status) }}</el-tag>
@@ -79,6 +88,15 @@
           </el-table-column>
           <el-table-column label="总分" width="90" sortable prop="overall">
             <template #default="{ row }"><b>{{ row.overall ?? '—' }}</b></template>
+          </el-table-column>
+          <el-table-column label="总耗时" width="100">
+            <template #default="{ row }">{{ row.total_seconds != null ? row.total_seconds + ' s' : '—' }}</template>
+          </el-table-column>
+          <el-table-column label="平均耗时" width="100">
+            <template #default="{ row }">{{ row.avg_seconds != null ? row.avg_seconds + ' s' : '—' }}</template>
+          </el-table-column>
+          <el-table-column label="输出速度" width="110">
+            <template #default="{ row }">{{ row.speed != null ? row.speed + ' tok/s' : '—' }}</template>
           </el-table-column>
         </el-table>
         <h4>答题明细</h4>
@@ -129,7 +147,8 @@ const detailRun = ref(null)
 const detailData = ref(null)
 let pollTimer = null
 
-const createForm = reactive({ name: '', model_ids: [], suite_ids: [], judge_model_id: null })
+const createForm = reactive({ name: '', model_ids: [], suite_ids: [], judge_model_id: null, difficulty: '' })
+const DIFF = { easy: '简单', medium: '中等', medium_high: '中高', hard: '高难', extreme: '极难' }
 
 const statusName = s => ({ pending: '排队中', running: '运行中', completed: '已完成', stopped: '已停止', failed: '失败' })[s] || s
 const statusType = s => ({ pending: 'info', running: 'warning', completed: 'success', stopped: 'info', failed: 'danger' })[s] || 'info'
@@ -147,7 +166,18 @@ const summaryRows = computed(() => {
     }
     const suiteScores = Object.values(bySuite).map(v => v.score)
     const overall = suiteScores.length ? Math.round(suiteScores.reduce((a, b) => a + b, 0) / suiteScores.length * 10) / 10 : null
-    return { model_id: m.id, model_name: m.display_name || m.name, suites: bySuite, overall }
+    const okRows = rows.filter(r => !r.error && r.latency_ms != null)
+    const totalMs = okRows.reduce((a, b) => a + b.latency_ms, 0)
+    const tokens = okRows.reduce((a, b) => a + (b.output_tokens || 0), 0)
+    return {
+      model_id: m.id,
+      model_name: m.display_name || m.name,
+      suites: bySuite,
+      overall,
+      total_seconds: okRows.length ? Math.round(totalMs / 100) / 10 : null,
+      avg_seconds: okRows.length ? Math.round(totalMs / okRows.length / 100) / 10 : null,
+      speed: totalMs && tokens ? Math.round(tokens / (totalMs / 1000)) : null
+    }
   }).sort((a, b) => (b.overall ?? -1) - (a.overall ?? -1))
 })
 const detailRows = computed(() => {

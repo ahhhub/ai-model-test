@@ -48,15 +48,22 @@ async def run_execute(run_id: int) -> None:
     suites = [db.query_one("SELECT * FROM suites WHERE id=?", (sid,)) for sid in suite_ids]
     suites = [s for s in suites if s]
     judge_model = db.query_one("SELECT * FROM models WHERE id=?", (run["judge_model_id"],)) if run.get("judge_model_id") else None
+    diff = (run.get("difficulty") or "").strip()
 
     # 统计任务总量并入库
     total = 0
     work_items = []
     for model in models:
         for suite in suites:
-            questions = db.query(
-                "SELECT * FROM questions WHERE suite_id=? ORDER BY id", (suite["id"],)
-            )
+            if diff:
+                questions = db.query(
+                    "SELECT * FROM questions WHERE suite_id=? AND difficulty=? ORDER BY id",
+                    (suite["id"], diff),
+                )
+            else:
+                questions = db.query(
+                    "SELECT * FROM questions WHERE suite_id=? ORDER BY id", (suite["id"],)
+                )
             for q in questions:
                 work_items.append((model, suite, q))
                 total += 1
@@ -72,7 +79,7 @@ async def run_execute(run_id: int) -> None:
             if stop_event.is_set():
                 return
             messages = llm.build_messages(q)
-            answer, latency, error = await llm.chat_once(model, messages)
+            answer, latency, error, usage = await llm.chat_once(model, messages)
             score, detail = 0.0, ""
             max_score = q.get("max_score") or 1
             if error:
@@ -87,10 +94,11 @@ async def run_execute(run_id: int) -> None:
                     score, detail = await frontend.score_html(answer, q, judge_model)
                 else:
                     score, detail = scorers.score_objective(answer, q)
+            output_tokens = (usage or {}).get("completion_tokens")
             db.execute(
                 """INSERT INTO run_results
-                   (run_id, model_id, suite_id, question_id, answer, score, max_score, latency_ms, error, detail)
-                   VALUES(?,?,?,?,?,?,?,?,?,?)""",
+                   (run_id, model_id, suite_id, question_id, answer, score, max_score, latency_ms, output_tokens, error, detail)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     run_id,
                     model["id"],
@@ -100,6 +108,7 @@ async def run_execute(run_id: int) -> None:
                     score,
                     max_score,
                     round(latency, 1) if latency is not None else None,
+                    output_tokens,
                     error or "",
                     detail or "",
                 ),

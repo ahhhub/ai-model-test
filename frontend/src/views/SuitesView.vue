@@ -26,8 +26,15 @@
             </el-button>
           </div>
           <div v-if="!currentSuite" class="empty-hint">← 点击左侧题库查看题目</div>
-          <el-scrollbar v-else max-height="560px">
-            <el-table :data="questions" v-loading="qLoading" border size="small">
+          <template v-else>
+            <div style="margin-bottom: 10px">
+              <el-radio-group v-model="diffFilter" size="small">
+                <el-radio-button value="">全部</el-radio-button>
+                <el-radio-button v-for="(label, key) in DIFF" :key="key" :value="key">{{ label }}</el-radio-button>
+              </el-radio-group>
+            </div>
+            <el-scrollbar max-height="520px">
+              <el-table :data="filteredQuestions" v-loading="qLoading" border size="small">
               <el-table-column type="index" label="#" width="45" />
               <el-table-column prop="title" label="题目" min-width="130" show-overflow-tooltip />
               <el-table-column label="类型" width="80">
@@ -35,6 +42,11 @@
                   <el-tag size="small" :type="row.judge ? 'warning' : 'info'">
                     {{ row.judge ? '裁判评分' : typeName(row.answer_type) }}
                   </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="难度" width="80">
+                <template #default="{ row }">
+                  <el-tag size="small" :type="diffTag(row.difficulty)">{{ DIFF[row.difficulty] || row.difficulty }}</el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="80">
@@ -45,7 +57,8 @@
                 </template>
               </el-table-column>
             </el-table>
-          </el-scrollbar>
+            </el-scrollbar>
+          </template>
         </el-card>
       </el-col>
     </el-row>
@@ -64,6 +77,11 @@
             <el-option label="数值题（自动判分）" value="number" />
             <el-option label="文本题（自动匹配）" value="text" />
             <el-option label="裁判评分题（主观题）" value="judge" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="难度">
+          <el-select v-model="form.difficulty" style="width: 100%">
+            <el-option v-for="(label, key) in DIFF" :key="key" :label="label" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item v-if="form.answer_type === 'choice'" label="选项">
@@ -89,7 +107,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import api from '../api'
 
@@ -102,8 +120,16 @@ const dialogVisible = ref(false)
 const suiteTable = ref(null)
 const optionsText = ref('')
 const expectedText = ref('')
+const diffFilter = ref('')
 
-const form = reactive({ title: '', prompt: '', answer_type: 'choice', image_url: '', rubric: '' })
+const DIFF = { easy: '简单', medium: '中等', medium_high: '中高', hard: '高难', extreme: '极难' }
+const diffTag = d => ({ easy: 'success', medium: 'info', medium_high: 'warning', hard: 'danger', extreme: 'danger' })[d] || 'info'
+
+const filteredQuestions = computed(() =>
+  diffFilter.value ? questions.value.filter(q => q.difficulty === diffFilter.value) : questions.value
+)
+
+const form = reactive({ title: '', prompt: '', answer_type: 'choice', image_url: '', rubric: '', difficulty: 'easy' })
 
 const tagType = c => ({ multimodal: 'success', emotion: 'warning', coding: 'primary', logic: 'danger', general: 'info', math: '' })[c] || 'info'
 const typeName = t => ({ choice: '选择题', number: '数值题', text: '文本题', code: '代码题', html: '前端题' })[t] || t
@@ -121,12 +147,13 @@ async function load() {
 async function selectSuite(suite) {
   if (!suite) return
   currentSuite.value = suite
+  diffFilter.value = ''
   qLoading.value = true
   try { questions.value = await api.listQuestions(suite.id) } finally { qLoading.value = false }
 }
 
 function openAdd() {
-  Object.assign(form, { title: '', prompt: '', answer_type: 'choice', image_url: '', rubric: '' })
+  Object.assign(form, { title: '', prompt: '', answer_type: 'choice', image_url: '', rubric: '', difficulty: 'easy' })
   optionsText.value = ''
   expectedText.value = ''
   dialogVisible.value = true
@@ -144,7 +171,8 @@ async function addQuestion() {
     judge: form.answer_type === 'judge',
     max_score: form.answer_type === 'judge' ? 10 : 1,
     rubric: form.rubric,
-    reference: ''
+    reference: '',
+    difficulty: form.difficulty
   }
   await api.addQuestion(currentSuite.value.id, payload)
   dialogVisible.value = false

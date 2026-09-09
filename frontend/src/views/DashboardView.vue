@@ -51,6 +51,21 @@
                   {{ row.suites[s.key] ? row.suites[s.key].score : '—' }}
                 </template>
               </el-table-column>
+              <el-table-column label="总耗时" width="100">
+                <template #default="{ row }">
+                  {{ row.total_latency_ms != null ? (Math.round(row.total_latency_ms / 100) / 10) + ' s' : '—' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="平均耗时" width="100">
+                <template #default="{ row }">
+                  {{ row.avg_latency_ms != null ? (Math.round(row.avg_latency_ms / 100) / 10) + ' s' : '—' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="输出速度" width="110">
+                <template #default="{ row }">
+                  {{ row.output_speed_tps != null ? row.output_speed_tps + ' tok/s' : '—' }}
+                </template>
+              </el-table-column>
             </el-table>
           </el-card>
         </el-col>

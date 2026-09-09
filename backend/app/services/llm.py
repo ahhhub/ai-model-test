@@ -19,23 +19,33 @@ def build_client(model: dict) -> AsyncOpenAI:
     return AsyncOpenAI(timeout=REQUEST_TIMEOUT_SECONDS, max_retries=1, **kwargs)
 
 
-async def chat_once(model: dict, messages: list[dict]) -> tuple[str, float, str | None]:
-    """发送一次对话请求，返回 (回答文本, 耗时ms, 错误信息或None)"""
+async def chat_once(model: dict, messages: list[dict]) -> tuple[str, float, str | None, dict | None]:
+    """发送一次对话请求，返回 (回答文本, 耗时ms, 错误信息或None, 用量信息或None)"""
     client = build_client(model)
     start = time.perf_counter()
     async with _semaphore:
         try:
             resp = await _create_completion(client, model, messages)
         except Exception as exc:  # noqa: BLE001
-            return "", (time.perf_counter() - start) * 1000, f"{type(exc).__name__}: {exc}"
+            return "", (time.perf_counter() - start) * 1000, f"{type(exc).__name__}: {exc}", None
         finally:
             await client.close()
     latency = (time.perf_counter() - start) * 1000
+    usage = None
     try:
         content = resp.choices[0].message.content or ""
     except (IndexError, AttributeError):
-        return "", latency, "模型返回格式异常（无 content）"
-    return content, latency, None
+        return "", latency, "模型返回格式异常（无 content）", None
+    try:
+        if resp.usage is not None:
+            usage = {
+                "prompt_tokens": getattr(resp.usage, "prompt_tokens", None),
+                "completion_tokens": getattr(resp.usage, "completion_tokens", None),
+                "total_tokens": getattr(resp.usage, "total_tokens", None),
+            }
+    except Exception:  # noqa: BLE001
+        usage = None
+    return content, latency, None, usage
 
 
 async def _create_completion(client: AsyncOpenAI, model: dict, messages: list[dict]):

@@ -44,6 +44,7 @@ class QuestionIn(BaseModel):
     max_score: float = 1
     rubric: str = ""
     reference: str = ""
+    difficulty: str = "easy"
 
 
 @router.post("/suites/{suite_id}/questions")
@@ -51,10 +52,11 @@ def add_question(suite_id: int, payload: QuestionIn):
     suite = db.query_one("SELECT id FROM suites WHERE id=?", (suite_id,))
     if not suite:
         raise HTTPException(404, "题库不存在")
+    diff = payload.difficulty if payload.difficulty in db.DIFFICULTY_LEVELS else "easy"
     qid = db.execute(
         """INSERT INTO questions
-           (suite_id,title,prompt,image_url,answer_type,options,expected,test_harness,rubric,reference,judge,max_score)
-           VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+           (suite_id,title,prompt,image_url,answer_type,options,expected,test_harness,rubric,reference,judge,max_score,difficulty)
+           VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (
             suite_id,
             payload.title.strip(),
@@ -68,6 +70,7 @@ def add_question(suite_id: int, payload: QuestionIn):
             payload.reference,
             1 if payload.judge else 0,
             payload.max_score,
+            diff,
         ),
     )
     return db.query_one("SELECT * FROM questions WHERE id=?", (qid,))

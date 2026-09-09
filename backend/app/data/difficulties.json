@@ -1,0 +1,82 @@
+{
+  "coding": {
+    "FizzBuzz": "easy",
+    "回文判断": "easy",
+    "两数之和": "medium",
+    "反转单词顺序": "easy",
+    "阶乘": "easy",
+    "斐波那契": "easy",
+    "互动拍立得相机": "medium",
+    "macOS 风格网页操作系统": "medium",
+    "科幻飞船驾驶舱 HUD": "medium"
+  },
+  "emotion": {
+    "安慰受批评的同事": "easy",
+    "回应朋友的喜悦": "easy",
+    "安慰失去宠物的人": "easy",
+    "倾听的原则": "easy",
+    "处理团队冲突": "easy",
+    "安慰考试失利的好友": "medium",
+    "鼓励方案被否的同事": "medium",
+    "回应与父母争吵的朋友": "medium",
+    "回应陌生人的道歉": "medium",
+    "安慰失恋的好友": "medium"
+  },
+  "general": {
+    "水的化学式": "easy",
+    "光速": "easy",
+    "太阳系最大行星": "easy",
+    "法国首都": "easy",
+    "化学元素 Fe": "easy",
+    "四大发明": "easy",
+    "阶乘": "easy",
+    "勾股定理": "easy",
+    "地球公转周期": "easy",
+    "世界最高峰": "easy",
+    "人体最大器官": "easy",
+    "光合作用": "easy",
+    "蒙娜丽莎": "easy",
+    "声音传播": "easy",
+    "登月第一人": "easy",
+    "哈姆雷特作者": "medium",
+    "DNA 结构": "medium",
+    "恐龙灭绝": "medium",
+    "联合国总部": "medium",
+    "二进制": "medium"
+  },
+  "logic": {
+    "三段论": "easy",
+    "斐波那契数列": "easy",
+    "数列规律": "easy",
+    "平方数": "easy",
+    "身高比较": "easy",
+    "密码组合": "easy",
+    "叫声类比": "easy",
+    "年龄差": "easy",
+    "天平称球": "medium",
+    "骑士与骗子": "medium"
+  },
+  "math": {
+    "苹果问题": "easy",
+    "读书天数": "easy",
+    "矩形面积": "easy",
+    "班级男生": "easy",
+    "找零": "easy",
+    "行驶距离": "medium",
+    "打折计算": "medium",
+    "解方程": "medium",
+    "等差数列": "medium",
+    "火车行程": "medium_high"
+  },
+  "multimodal": {
+    "名画识别": "easy",
+    "动物识别": "easy",
+    "地标建筑": "easy",
+    "水果识别": "easy",
+    "斑马特征": "easy",
+    "交通信号灯": "easy",
+    "香蕉识别": "easy",
+    "名山识别": "medium",
+    "图像描述": "medium"
+  }
+}
